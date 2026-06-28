@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Jabatan — Pedagang Lounge</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Luckiest+Guy&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0a00;--bg2:#2a1200;--card:#231000;--card2:#2e1500;
+  --border:rgba(200,120,20,0.15);--border2:rgba(200,120,20,0.25);
+  --text:#fff5e6;--muted:#a07850;--accent:#f59e0b;--accent2:#dc6f00;
+  --red:#ef4444;--gold:#fbbf24;--success:#22c55e;--danger:#f43f5e;
+  --r:14px;--rs:9px;
+}
+body{font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 700px 500px at 10% 10%,rgba(245,158,11,.07) 0%,transparent 70%),radial-gradient(ellipse 600px 400px at 90% 90%,rgba(220,111,0,.07) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+.header{position:relative;z-index:10;background:linear-gradient(135deg,#2a1200,#1a0a00);border-bottom:2px solid rgba(245,158,11,.3);box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.header-inner{max-width:960px;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.logo-fallback{width:52px;height:52px;flex-shrink:0;border-radius:50%;border:2px solid var(--accent);background:linear-gradient(135deg,#f59e0b,#dc6f00);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 20px rgba(245,158,11,.4)}
+.header-text h1{font-family:'Luckiest Guy',cursive;font-size:1.2rem;letter-spacing:2px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-text p{font-size:.72rem;color:var(--muted);margin-top:2px;font-weight:600}
+.back-btn{margin-left:auto;padding:.5rem 1.1rem;border-radius:20px;border:1px solid rgba(245,158,11,.3);background:transparent;color:var(--accent);font-size:.8rem;font-weight:800;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s}
+.back-btn:hover{background:rgba(245,158,11,.1)}
+
+.main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 5rem;position:relative;z-index:1}
+.page-title{font-family:'Luckiest Guy',cursive;font-size:1.6rem;letter-spacing:3px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.35rem}
+.page-sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem;font-weight:600}
+
+.layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem}
+@media(max-width:700px){.layout{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.3);margin-bottom:1.25rem}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)}
+.card-title{font-size:1rem;font-weight:800;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+.g-text{background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.field{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+.field label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+input[type=text],input[type=number],select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:.95rem;padding:.72rem 1rem;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;-webkit-appearance:none;appearance:none}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.13)}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+@media(max-width:480px){.g2{grid-template-columns:1fr}}
+
+.btn{padding:.72rem 1.25rem;border:none;border-radius:var(--rs);font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,#f59e0b,#dc6f00);color:white;box-shadow:0 3px 12px rgba(245,158,11,.3);width:100%;justify-content:center;padding:.82rem}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{background:var(--card2);color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn-danger{background:rgba(244,63,94,.1);color:var(--danger);border:1px solid rgba(244,63,94,.2)}
+.btn-danger:hover{background:rgba(244,63,94,.2)}
+.btn-sm{padding:.45rem .85rem;font-size:.78rem}
+
+/* BADGE COLOR PICKER */
+.badge-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:.4rem}
+.badge-opt{padding:4px 6px;border-radius:6px;cursor:pointer;font-size:.62rem;font-weight:800;text-align:center;border:2px solid transparent;transition:all .15s}
+.badge-opt.sel{border-color:white;transform:scale(1.08);box-shadow:0 0 0 2px var(--accent)}
+
+/* LIST */
+.jab-list{display:flex;flex-direction:column;gap:8px}
+.jab-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:.85rem 1rem;display:flex;align-items:center;gap:10px;transition:border-color .2s;flex-wrap:wrap}
+.jab-item:hover{border-color:var(--border2)}
+.jab-info{flex:1;min-width:0}
+.jab-name{font-weight:800;font-size:.88rem}
+.jab-short{font-size:.72rem;color:var(--muted);margin-top:2px}
+.jab-gaji{font-size:.75rem;font-weight:700;color:var(--success);margin-top:2px}
+.jab-actions{display:flex;gap:5px;flex-shrink:0}
+.badge{padding:3px 9px;border-radius:10px;font-size:.68rem;font-weight:800;flex-shrink:0}
+.num-badge{background:rgba(245,158,11,.1);color:var(--accent);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:2px 7px;font-size:.7rem;font-weight:800;flex-shrink:0}
+
+.divider{height:1px;background:var(--border);margin:1rem 0}
+.counter{display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:800;color:var(--accent);margin-bottom:1rem}
+
+.gaji-info{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:var(--rs);padding:.75rem 1rem;font-size:.82rem}
+.gaji-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.gaji-row:last-child{border-bottom:none}
+.gaji-label{color:var(--muted);font-weight:600}
+.gaji-val{color:var(--success);font-weight:800}
+
+#toast-c{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:.72rem 1.15rem;border-radius:var(--rs);font-size:.88rem;font-weight:700;color:white;animation:tIn .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4);max-width:320px}
+.toast.ok{background:linear-gradient(135deg,#059669,#10b981)}.toast.err{background:linear-gradient(135deg,#be123c,#f43f5e)}.toast.info{background:linear-gradient(135deg,#b45309,#f59e0b)}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-fallback">🍜</div>
+    <div class="header-text">
+      <h1>Manajemen Jabatan</h1>
+      <p>Pedagang Lounge System — Data Jabatan & Gaji</p>
+    </div>
+    <a href="index.html" class="back-btn">← Kembali ke Index</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-title">🏷️ DATA JABATAN</div>
+  <div class="page-sub">Kelola daftar jabatan, singkatan, warna badge, dan skala gaji. Perubahan langsung berlaku di sistem.</div>
+
+  <div class="layout">
+
+    <!-- KIRI -->
+    <div>
+      <!-- FORM -->
+      <div class="card">
+        <div class="card-title">➕ <span class="g-text">Tambah / Edit Jabatan</span></div>
+        <div id="edit-indicator"></div>
+
+        <div class="field">
+          <label>Nama Jabatan Lengkap <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="f-nama" placeholder="Contoh: Staff Senior" oninput="updatePreview()"/>
+        </div>
+        <div class="g2">
+          <div class="field">
+            <label>Singkatan <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="f-short" placeholder="Sr. Staff" maxlength="15" oninput="updatePreview()"/>
+          </div>
+          <div class="field">
+            <label>Kode CSS (internal)</label>
+            <input type="text" id="f-cls" placeholder="r-ss" maxlength="10" oninput="updatePreview()"/>
+            <small style="color:var(--muted);font-size:.68rem">Auto-generate jika kosong</small>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Warna Badge</label>
+          <div class="badge-grid" id="badge-grid"></div>
+        </div>
+
+        <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:var(--rs);padding:1rem;margin-bottom:1rem">
+          <div class="card-title" style="margin-bottom:.85rem;font-size:.88rem">💰 <span class="g-text">Skala Gaji (opsional)</span></div>
+          <div class="g2">
+            <div class="field">
+              <label>Gaji Full ($)</label>
+              <input type="number" id="f-gfull" placeholder="45000" min="0" oninput="updatePreview()"/>
+            </div>
+            <div class="field">
+              <label>Gaji Setengah ($)</label>
+              <input type="number" id="f-ghalf" placeholder="22500" min="0" oninput="updatePreview()"/>
+              <small style="color:var(--muted);font-size:.68rem">Auto = full ÷ 2</small>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:.5rem">
+          <button class="btn btn-primary" id="save-btn" onclick="saveJabatan()">💾 Simpan Jabatan</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:.75rem">
+          <button class="btn btn-ghost btn-sm" onclick="cancelEdit()">✖ Batal Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetForm()">🔄 Reset Form</button>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      <div class="card">
+        <div class="card-title">📋 <span class="g-text">Daftar Jabatan</span></div>
+        <div class="counter" id="count-badge">0 jabatan</div>
+        <div id="jabatan-list"></div>
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="exportData()">📤 Export JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="importTrigger()">📥 Import JSON</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
+          <button class="btn btn-danger btn-sm" onclick="resetToDefault()">🔄 Reset ke Default</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KANAN -->
+    <div>
+      <div class="card" style="position:sticky;top:1rem">
+        <div class="card-title">👁️ <span class="g-text">Preview Badge</span></div>
+        <div style="margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:8px">
+          <span class="badge" id="preview-badge">Badge</span>
+          <span style="font-weight:800;font-size:.92rem" id="preview-nama-disp">Nama Jabatan</span>
+        </div>
+        <div class="gaji-info" id="preview-gaji">
+          <div class="gaji-row"><span class="gaji-label">Gaji Full</span><span class="gaji-val" id="pg-full">—</span></div>
+          <div class="gaji-row"><span class="gaji-label">Gaji Setengah</span><span class="gaji-val" id="pg-half">—</span></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="card-title" style="font-size:.85rem">📘 <span class="g-text">Panduan Warna Badge</span></div>
+        <div id="badge-legend"></div>
+
+        <div class="divider"></div>
+        <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.85rem;font-size:.78rem;color:rgba(251,191,36,.8)">
+          ⚠️ Perubahan jabatan otomatis ter-sync ke form Index. Perbarui halaman Index jika jabatan tidak muncul.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-c"></div>
+
+<script>
+const DEFAULT_JABATAN=[
+  {name:'Chief Executive Officer (CEO)',short:'CEO',cls:'r-ceo',color:'#fbbf24',bg:'rgba(251,191,36,.15)',gajiF:65000,gajiH:32500},
+  {name:'Chief Operating Officer (COO)',short:'COO',cls:'r-coo',color:'#f59e0b',bg:'rgba(245,158,11,.15)',gajiF:62000,gajiH:31000},
+  {name:'Chief Human Resources Officer (HR)',short:'HR',cls:'r-hr',color:'#f472b6',bg:'rgba(244,114,182,.15)',gajiF:59000,gajiH:29500},
+  {name:'COO Assistant / Logistics Manager',short:'Logistics',cls:'r-log',color:'#22d3ee',bg:'rgba(34,211,238,.15)',gajiF:56000,gajiH:28000},
+  {name:'Head Chef',short:'Head Chef',cls:'r-hc',color:'#f97316',bg:'rgba(249,115,22,.15)',gajiF:53000,gajiH:26500},
+  {name:'Chef',short:'Chef',cls:'r-chef',color:'#ef4444',bg:'rgba(239,68,68,.15)',gajiF:50000,gajiH:25000},
+  {name:'Staff Senior',short:'Sr. Staff',cls:'r-ss',color:'#2dd4bf',bg:'rgba(45,212,191,.15)',gajiF:45000,gajiH:22500},
+  {name:'Staff Junior',short:'Jr. Staff',cls:'r-sj',color:'#a78bfa',bg:'rgba(157,111,255,.15)',gajiF:35000,gajiH:17500},
+  {name:'Staff Trainer',short:'Trainer',cls:'r-st',color:'#22c55e',bg:'rgba(34,197,94,.15)',gajiF:30000,gajiH:15000},
+];
+
+const BADGE_COLORS=[
+  {color:'#fbbf24',bg:'rgba(251,191,36,.15)',label:'Kuning'},
+  {color:'#f59e0b',bg:'rgba(245,158,11,.15)',label:'Amber'},
+  {color:'#f472b6',bg:'rgba(244,114,182,.15)',label:'Pink'},
+  {color:'#22d3ee',bg:'rgba(34,211,238,.15)',label:'Cyan'},
+  {color:'#f97316',bg:'rgba(249,115,22,.15)',label:'Oranye'},
+  {color:'#ef4444',bg:'rgba(239,68,68,.15)',label:'Merah'},
+  {color:'#2dd4bf',bg:'rgba(45,212,191,.15)',label:'Teal'},
+  {color:'#a78bfa',bg:'rgba(157,111,255,.15)',label:'Ungu'},
+  {color:'#22c55e',bg:'rgba(34,197,94,.15)',label:'Hijau'},
+  {color:'#fb7185',bg:'rgba(251,113,133,.15)',label:'Rose'},
+  {color:'#38bdf8',bg:'rgba(56,189,248,.15)',label:'Biru'},
+  {color:'#e879f9',bg:'rgba(232,121,249,.15)',label:'Fuchsia'},
+  {color:'#a3e635',bg:'rgba(163,230,53,.15)',label:'Lime'},
+  {color:'#94a3b8',bg:'rgba(148,163,184,.15)',label:'Abu'},
+  {color:'#fdba74',bg:'rgba(253,186,116,.15)',label:'Peach'},
+  {color:'#67e8f9',bg:'rgba(103,232,249,.15)',label:'Sky'},
+  {color:'#d8b4fe',bg:'rgba(216,180,254,.15)',label:'Lavender'},
+  {color:'#6ee7b7',bg:'rgba(110,231,183,.15)',label:'Mint'},
+];
+
+const STORAGE_KEY='pd_jabatan_v4';
+let editIdx=-1;
+let selColor=BADGE_COLORS[0];
+
+function loadJabatan(){
+  const d=localStorage.getItem(STORAGE_KEY);
+  if(!d){saveJabatanData(JSON.parse(JSON.stringify(DEFAULT_JABATAN)));return JSON.parse(JSON.stringify(DEFAULT_JABATAN));}
+  return JSON.parse(d);
+}
+function saveJabatanData(arr){localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));}
+
+function buildBadgeGrid(){
+  const grid=document.getElementById('badge-grid');
+  const legend=document.getElementById('badge-legend');
+  grid.innerHTML='';legend.innerHTML='';
+  BADGE_COLORS.forEach((c,i)=>{
+    const btn=document.createElement('div');
+    btn.className='badge-opt'+(c.color===selColor.color?' sel':'');
+    btn.style.background=c.bg;btn.style.color=c.color;btn.style.borderColor=c.color;
+    btn.textContent='A';btn.title=c.label;
+    btn.onclick=()=>{selColor=c;buildBadgeGrid();updatePreview();};
+    grid.appendChild(btn);
+    if(i<9)legend.innerHTML+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="badge" style="background:${c.bg};color:${c.color}">${c.label}</span></div>`;
+  });
+}
+
+function fmtRupiah(n){if(!n&&n!==0)return'—';return'$'+Number(n).toLocaleString('en-US');}
+
+function updatePreview(){
+  const nama=document.getElementById('f-nama').value.trim()||'Nama Jabatan';
+  const short=document.getElementById('f-short').value.trim()||nama.split(' ')[0];
+  const gf=document.getElementById('f-gfull').value;
+  const gh=document.getElementById('f-ghalf').value||(gf?Math.round(gf/2):'');
+  const badge=document.getElementById('preview-badge');
+  badge.textContent=short;badge.style.background=selColor.bg;badge.style.color=selColor.color;
+  document.getElementById('preview-nama-disp').textContent=nama;
+  document.getElementById('pg-full').textContent=gf?fmtRupiah(gf):'—';
+  document.getElementById('pg-half').textContent=gh?fmtRupiah(gh):'—';
+}
+
+function renderList(){
+  const arr=loadJabatan();
+  document.getElementById('count-badge').textContent=arr.length+' jabatan';
+  const wrap=document.getElementById('jabatan-list');
+  if(!arr.length){wrap.innerHTML='<div style="text-align:center;color:var(--muted);padding:2rem;font-size:.88rem">Belum ada jabatan.</div>';return;}
+  wrap.innerHTML='';
+  arr.forEach((j,i)=>{
+    const g=j.gajiF?`Gaji: ${fmtRupiah(j.gajiF)} / ${fmtRupiah(j.gajiH)}`:'Gaji belum diset';
+    wrap.innerHTML+=`<div class="jab-item">
+      <span class="num-badge">${i+1}</span>
+      <span class="badge" style="background:${j.bg||'rgba(245,158,11,.15)'};color:${j.color||'#f59e0b'}">${j.short}</span>
+      <div class="jab-info">
+        <div class="jab-name">${j.name}</div>
+        <div class="jab-gaji">💰 ${g}</div>
+      </div>
+      <div class="jab-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editJabatan(${i})" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteJabatan(${i})" title="Hapus">🗑️</button>
+      </div>
+    </div>`;
+  });
+}
+
+function saveJabatan(){
+  const nama=document.getElementById('f-nama').value.trim();
+  if(!nama){toast('Nama jabatan tidak boleh kosong!','err');return;}
+  const short=document.getElementById('f-short').value.trim();
+  if(!short){toast('Singkatan tidak boleh kosong!','err');return;}
+  let cls=document.getElementById('f-cls').value.trim();
+  if(!cls)cls='r-'+nama.toLowerCase().replace(/[^a-z]/g,'').slice(0,8);
+  const gf=parseInt(document.getElementById('f-gfull').value)||0;
+  const gh=parseInt(document.getElementById('f-ghalf').value)||(gf?Math.round(gf/2):0);
+  const obj={name:nama,short,cls,color:selColor.color,bg:selColor.bg,gajiF:gf||null,gajiH:gh||null};
+  const arr=loadJabatan();
+  if(editIdx===-1){
+    const exists=arr.some(j=>j.name.toLowerCase()===nama.toLowerCase());
+    if(exists){toast('Jabatan sudah ada!','err');return;}
+    arr.push(obj);toast('Jabatan berhasil ditambahkan! ✅','ok');
+  }else{
+    arr[editIdx]=obj;toast('Jabatan berhasil diperbarui! ✅','ok');editIdx=-1;
+  }
+  saveJabatanData(arr);renderList();resetForm();
+  document.getElementById('save-btn').textContent='💾 Simpan Jabatan';
+  document.getElementById('edit-indicator').innerHTML='';
+}
+
+function editJabatan(idx){
+  const arr=loadJabatan();const j=arr[idx];editIdx=idx;
+  document.getElementById('f-nama').value=j.name;
+  document.getElementById('f-short').value=j.short;
+  document.getElementById('f-cls').value=j.cls;
+  document.getElementById('f-gfull').value=j.gajiF||'';
+  document.getElementById('f-ghalf').value=j.gajiH||'';
+  const foundColor=BADGE_COLORS.find(c=>c.color===j.color)||BADGE_COLORS[0];
+  selColor=foundColor;buildBadgeGrid();updatePreview();
+  document.getElementById('save-btn').textContent='💾 Update Jabatan';
+  document.getElementById('edit-indicator').innerHTML=`<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .9rem;margin-bottom:1rem;font-size:.8rem;color:var(--gold);font-weight:700">✏️ Mode edit: <strong>${j.name}</strong></div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelEdit(){editIdx=-1;resetForm();document.getElementById('save-btn').textContent='💾 Simpan Jabatan';document.getElementById('edit-indicator').innerHTML='';}
+function deleteJabatan(idx){
+  const arr=loadJabatan();const nm=arr[idx].name;
+  if(!confirm(`Hapus jabatan "${nm}"?`))return;
+  arr.splice(idx,1);saveJabatanData(arr);renderList();toast(nm+' dihapus','info');
+  if(editIdx===idx)cancelEdit();
+}
+function resetForm(){
+  ['f-nama','f-short','f-cls','f-gfull','f-ghalf'].forEach(id=>document.getElementById(id).value='');
+  selColor=BADGE_COLORS[0];buildBadgeGrid();updatePreview();
+}
+function exportData(){
+  const arr=loadJabatan();
+  const blob=new Blob([JSON.stringify({jabatan:arr,exported:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pd_jabatan_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+  toast('Data jabatan berhasil di-export!','ok');
+}
+function importTrigger(){document.getElementById('import-file').click();}
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const arr=data.jabatan||data;
+      if(!Array.isArray(arr)||!arr[0]?.name)throw new Error('Format tidak valid');
+      if(!confirm(`Import ${arr.length} jabatan?\nData jabatan saat ini akan DIGANTI.`))return;
+      saveJabatanData(arr);renderList();toast('Import berhasil! '+arr.length+' jabatan dimuat','ok');
+    }catch(err){toast('Format JSON tidak valid!','err');}
+  };reader.readAsText(file);input.value='';
+}
+function resetToDefault(){
+  if(!confirm('Reset ke jabatan default?'))return;
+  saveJabatanData(JSON.parse(JSON.stringify(DEFAULT_JABATAN)));renderList();toast('Data direset ke default','info');
+}
+function toast(msg,type){const el=document.createElement('div');el.className='toast '+(type||'info');el.textContent=msg;document.getElementById('toast-c').appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+window.onload=function(){buildBadgeGrid();renderList();updatePreview();};
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Anggota — Pedagang Lounge</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Luckiest+Guy&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0a00;--bg2:#2a1200;--card:#231000;--card2:#2e1500;--card3:#3a1c00;
+  --border:rgba(200,120,20,0.15);--border2:rgba(200,120,20,0.25);
+  --text:#fff5e6;--muted:#a07850;--accent:#f59e0b;--accent2:#dc6f00;
+  --red:#ef4444;--gold:#fbbf24;--success:#22c55e;--danger:#f43f5e;
+  --r:14px;--rs:9px;
+}
+body{font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 700px 500px at 10% 10%,rgba(245,158,11,.07) 0%,transparent 70%),radial-gradient(ellipse 600px 400px at 90% 90%,rgba(220,111,0,.07) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+.header{position:relative;z-index:10;background:linear-gradient(135deg,#2a1200,#1a0a00);border-bottom:2px solid rgba(245,158,11,.3);box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.header-inner{max-width:960px;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.logo-fallback{width:52px;height:52px;flex-shrink:0;border-radius:50%;border:2px solid var(--accent);background:linear-gradient(135deg,#f59e0b,#dc6f00);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 20px rgba(245,158,11,.4)}
+.header-text h1{font-family:'Luckiest Guy',cursive;font-size:1.2rem;letter-spacing:2px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-text p{font-size:.72rem;color:var(--muted);margin-top:2px;font-weight:600}
+.back-btn{margin-left:auto;padding:.5rem 1.1rem;border-radius:20px;border:1px solid rgba(245,158,11,.3);background:transparent;color:var(--accent);font-size:.8rem;font-weight:800;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .2s}
+.back-btn:hover{background:rgba(245,158,11,.1)}
+
+.main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 5rem;position:relative;z-index:1}
+.page-title{font-family:'Luckiest Guy',cursive;font-size:1.6rem;letter-spacing:3px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.35rem}
+.page-sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem;font-weight:600}
+
+.layout{display:grid;grid-template-columns:1fr 340px;gap:1.5rem}
+@media(max-width:720px){.layout{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)}
+.card-title{font-size:1rem;font-weight:800;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+.g-text{background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.field{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+.field label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+input[type=text],select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:.95rem;padding:.72rem 1rem;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.13)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23a07850' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem;cursor:pointer}
+select option{background:#2a1200}
+
+.btn{padding:.72rem 1.25rem;border:none;border-radius:var(--rs);font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,#f59e0b,#dc6f00);color:white;box-shadow:0 3px 12px rgba(245,158,11,.3);width:100%;justify-content:center;padding:.82rem}
+.btn-primary:hover{filter:brightness(1.1);box-shadow:0 5px 18px rgba(245,158,11,.45)}
+.btn-ghost{background:var(--card2);color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn-danger{background:rgba(244,63,94,.1);color:var(--danger);border:1px solid rgba(244,63,94,.2)}
+.btn-danger:hover{background:rgba(244,63,94,.2)}
+.btn-sm{padding:.45rem .85rem;font-size:.78rem}
+
+/* COLOR PICKER GRID */
+.color-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:.4rem}
+.color-opt{width:100%;aspect-ratio:1;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:white}
+.color-opt.sel{border-color:white;transform:scale(1.15);box-shadow:0 0 0 2px var(--accent)}
+
+/* ANGGOTA LIST */
+.anggota-list{display:flex;flex-direction:column;gap:8px}
+.anggota-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem 1rem;display:flex;align-items:center;gap:10px;transition:border-color .2s}
+.anggota-item:hover{border-color:var(--border2)}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.av-1{background:rgba(251,191,36,.25);color:#fbbf24}.av-2{background:rgba(245,158,11,.25);color:#f59e0b}
+.av-3{background:rgba(244,114,182,.25);color:#f472b6}.av-4{background:rgba(34,211,238,.25);color:#22d3ee}
+.av-5{background:rgba(45,212,191,.25);color:#2dd4bf}.av-6{background:rgba(249,115,22,.25);color:#f97316}.av-7{background:rgba(157,111,255,.25);color:#a78bfa}
+.ai-info{flex:1;min-width:0}
+.ai-name{font-weight:800;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-meta{font-size:.72rem;color:var(--muted);margin-top:1px}
+.ai-actions{display:flex;gap:5px;flex-shrink:0}
+.num-badge{background:rgba(245,158,11,.1);color:var(--accent);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:2px 7px;font-size:.7rem;font-weight:800;flex-shrink:0}
+
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty-state .es-icon{font-size:3rem;margin-bottom:.75rem}
+.empty-state p{font-size:.88rem}
+
+.tag{padding:3px 9px;border-radius:10px;font-size:.68rem;font-weight:800}
+
+/* TOAST */
+#toast-c{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:.72rem 1.15rem;border-radius:var(--rs);font-size:.88rem;font-weight:700;color:white;animation:tIn .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4);max-width:320px}
+.toast.ok{background:linear-gradient(135deg,#059669,#10b981)}
+.toast.err{background:linear-gradient(135deg,#be123c,#f43f5e)}
+.toast.info{background:linear-gradient(135deg,#b45309,#f59e0b)}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.divider{height:1px;background:var(--border);margin:1rem 0}
+.counter{display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:800;color:var(--accent);margin-bottom:1rem}
+
+.sort-row{display:flex;gap:6px;margin-bottom:.85rem;flex-wrap:wrap}
+.sort-btn{padding:.35rem .75rem;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s}
+.sort-btn.active,.sort-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(245,158,11,.08)}
+
+.edit-mode{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem;animation:fadeIn .2s ease}
+.edit-label{font-size:.7rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem}
+
+.jabatan-select{font-size:.82rem}
+
+/* Default jabatan mapping indicator */
+.default-jab-wrap{margin-top:.5rem}
+.default-jab-wrap label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-fallback">🍜</div>
+    <div class="header-text">
+      <h1>Manajemen Anggota</h1>
+      <p>Pedagang Lounge System — Data Anggota</p>
+    </div>
+    <a href="index.html" class="back-btn">← Kembali ke Index</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-title">👥 DATA ANGGOTA</div>
+  <div class="page-sub">Tambah, edit, dan hapus daftar anggota Pedagang Lounge. Perubahan otomatis tersimpan dan langsung tampil di Index.</div>
+
+  <div class="layout">
+
+    <!-- KIRI: FORM + LIST -->
+    <div>
+      <!-- FORM TAMBAH -->
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-title">➕ <span class="g-text">Tambah Anggota Baru</span></div>
+
+        <div id="edit-indicator"></div>
+
+        <div class="field">
+          <label>Nama Lengkap <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="f-nama" placeholder="Contoh: Budi Santoso" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>Inisial Avatar (maks 2 huruf)</label>
+          <input type="text" id="f-av" placeholder="Contoh: BS" maxlength="2" autocomplete="off" oninput="this.value=this.value.toUpperCase()"/>
+          <small style="color:var(--muted);font-size:.7rem">Kosongkan untuk auto-generate dari nama</small>
+        </div>
+        <div class="field">
+          <label>Warna Avatar</label>
+          <div class="color-grid" id="color-grid"></div>
+        </div>
+        <div class="field default-jab-wrap">
+          <label>Default Jabatan (opsional)</label>
+          <select id="f-dj" class="jabatan-select">
+            <option value="">— Tidak Ada Default —</option>
+          </select>
+          <small style="color:var(--muted);font-size:.7rem">Jika diset, jabatan akan otomatis terisi saat nama ini dipilih di form duty/izin</small>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:.5rem">
+          <button class="btn btn-primary" id="save-btn" onclick="saveAnggota()">💾 Simpan Anggota</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:.75rem">
+          <button class="btn btn-ghost btn-sm" onclick="cancelEdit()">✖ Batal Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetForm()">🔄 Reset Form</button>
+        </div>
+      </div>
+
+      <!-- LIST ANGGOTA -->
+      <div class="card">
+        <div class="card-title">📋 <span class="g-text">Daftar Anggota</span></div>
+
+        <div class="sort-row">
+          <button class="sort-btn active" onclick="setSort('urut',this)">📌 Urutan Asli</button>
+          <button class="sort-btn" onclick="setSort('az',this)">🔤 A–Z</button>
+          <button class="sort-btn" onclick="setSort('za',this)">🔤 Z–A</button>
+        </div>
+
+        <div class="counter" id="count-badge">0 anggota</div>
+        <div id="anggota-list"></div>
+
+        <div class="divider"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="exportData()">📤 Export JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="importTrigger()">📥 Import JSON</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"/>
+          <button class="btn btn-danger btn-sm" onclick="resetToDefault()">🔄 Reset ke Default</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KANAN: PREVIEW + INFO -->
+    <div>
+      <div class="card" style="margin-bottom:1.25rem;position:sticky;top:1rem">
+        <div class="card-title">👁️ <span class="g-text">Preview Avatar</span></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.25rem">
+          <div class="av" id="preview-av" style="width:52px;height:52px;font-size:16px;background:rgba(251,191,36,.25);color:#fbbf24">??</div>
+          <div>
+            <div id="preview-nama" style="font-weight:800;font-size:.95rem">Nama Anggota</div>
+            <div id="preview-jab" style="font-size:.75rem;color:var(--muted)">Belum ada jabatan default</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="card-title" style="margin-top:1rem;font-size:.88rem">ℹ️ <span class="g-text">Info Warna</span></div>
+        <div id="color-legend"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📦 <span class="g-text">Backup & Restore</span></div>
+        <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Data anggota tersimpan di browser (localStorage). Export JSON untuk backup, Import untuk restore.</p>
+        <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.85rem;font-size:.78rem;color:rgba(251,191,36,.8)">
+          ⚠️ <strong>Penting:</strong> Data hilang jika browser di-clear. Selalu backup via Export JSON secara berkala!
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-c"></div>
+
+<script>
+// ===================== DATA DEFAULT =====================
+const DEFAULT_ANGGOTA=[
+  {name:'Keyaru Louvent',av:'KL',col:'av-1',defaultJab:'Chief Executive Officer (CEO)'},
+  {name:'Celine Felicia',av:'CF',col:'av-3',defaultJab:''},
+  {name:'Ami Queen',av:'AQ',col:'av-5',defaultJab:''},
+  {name:'Celinad Felicia',av:'CF',col:'av-3',defaultJab:''},
+  {name:'Naisha Mayra',av:'NM',col:'av-4',defaultJab:''},
+  {name:'Alexiee Louvent',av:'AL',col:'av-2',defaultJab:'Chief Operating Officer (COO)'},
+  {name:'Keyra Louvent',av:'KL',col:'av-1',defaultJab:'Chief Operating Officer (COO)'},
+  {name:'Aan Darsh',av:'AD',col:'av-6',defaultJab:''},
+  {name:'Brahmanta Sebastian',av:'BS',col:'av-7',defaultJab:''},
+  {name:'Dio Arya',av:'DA',col:'av-2',defaultJab:''},
+  {name:'Exxa Akashie',av:'EA',col:'av-5',defaultJab:''},
+  {name:'Imanuel Wasington',av:'IW',col:'av-4',defaultJab:''},
+  {name:'Oscar Gorbunov',av:'OG',col:'av-6',defaultJab:''},
+  {name:'Ricardo Gerrard',av:'RG',col:'av-7',defaultJab:''},
+  {name:'Trafalgar Paul',av:'TP',col:'av-1',defaultJab:''},
+];
+
+const COLORS=[
+  {cls:'av-1',bg:'rgba(251,191,36,.25)',color:'#fbbf24',label:'Kuning'},
+  {cls:'av-2',bg:'rgba(245,158,11,.25)',color:'#f59e0b',label:'Amber'},
+  {cls:'av-3',bg:'rgba(244,114,182,.25)',color:'#f472b6',label:'Pink'},
+  {cls:'av-4',bg:'rgba(34,211,238,.25)',color:'#22d3ee',label:'Cyan'},
+  {cls:'av-5',bg:'rgba(45,212,191,.25)',color:'#2dd4bf',label:'Teal'},
+  {cls:'av-6',bg:'rgba(249,115,22,.25)',color:'#f97316',label:'Oranye'},
+  {cls:'av-7',bg:'rgba(157,111,255,.25)',color:'#a78bfa',label:'Ungu'},
+];
+
+const STORAGE_KEY='pd_anggota_v4';
+const JABATAN_STORAGE='pd_jabatan_v4';
+
+let editIdx=-1;
+let sortMode='urut';
+let selColor='av-1';
+
+function loadAnggota(){
+  const d=localStorage.getItem(STORAGE_KEY);
+  if(!d){
+    const def=JSON.parse(JSON.stringify(DEFAULT_ANGGOTA));
+    saveAnggotaData(def);
+    return def;
+  }
+  return JSON.parse(d);
+}
+function saveAnggotaData(arr){localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));}
+function loadJabatan(){
+  const d=localStorage.getItem(JABATAN_STORAGE);
+  if(!d)return null;
+  return JSON.parse(d);
+}
+
+function buildColorGrid(){
+  const grid=document.getElementById('color-grid');
+  const legend=document.getElementById('color-legend');
+  grid.innerHTML='';legend.innerHTML='';
+  COLORS.forEach(c=>{
+    const btn=document.createElement('div');
+    btn.className='color-opt'+(c.cls===selColor?' sel':'');
+    btn.style.background=c.bg;btn.style.color=c.color;btn.style.border='2px solid '+c.color;
+    btn.textContent='A';btn.title=c.label;
+    btn.onclick=()=>{selColor=c.cls;buildColorGrid();updatePreview();};
+    grid.appendChild(btn);
+    legend.innerHTML+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div class="av ${c.cls}" style="width:22px;height:22px;font-size:9px">A</div><span style="font-size:.75rem;color:var(--muted)">${c.label}</span></div>`;
+  });
+}
+
+function buildJabatanSelect(){
+  const jab=loadJabatan();
+  const sel=document.getElementById('f-dj');
+  const list=jab||[
+    {name:'Chief Executive Officer (CEO)'},{name:'Chief Operating Officer (COO)'},
+    {name:'Chief Human Resources Officer (HR)'},{name:'COO Assistant / Logistics Manager'},
+    {name:'Head Chef'},{name:'Chef'},{name:'Staff Senior'},{name:'Staff Junior'},{name:'Staff Trainer'},
+  ];
+  sel.innerHTML='<option value="">— Tidak Ada Default —</option>';
+  list.forEach(j=>{sel.innerHTML+=`<option value="${j.name}">${j.name}</option>`;});
+}
+
+function updatePreview(){
+  const nama=document.getElementById('f-nama').value.trim()||'Nama Anggota';
+  let av=document.getElementById('f-av').value.trim().toUpperCase();
+  if(!av){const parts=nama.split(' ');av=parts.length>=2?(parts[0][0]+parts[1][0]).toUpperCase():nama.slice(0,2).toUpperCase();}
+  const c=COLORS.find(x=>x.cls===selColor)||COLORS[0];
+  const avEl=document.getElementById('preview-av');
+  avEl.textContent=av;avEl.className='av '+selColor;avEl.style.width='52px';avEl.style.height='52px';avEl.style.fontSize='16px';
+  document.getElementById('preview-nama').textContent=nama;
+  const dj=document.getElementById('f-dj').value;
+  document.getElementById('preview-jab').textContent=dj||'Belum ada jabatan default';
+}
+
+document.getElementById('f-nama').addEventListener('input',updatePreview);
+document.getElementById('f-av').addEventListener('input',updatePreview);
+document.getElementById('f-dj').addEventListener('change',updatePreview);
+
+function renderList(){
+  const arr=loadAnggota();
+  let sorted=[...arr];
+  if(sortMode==='az')sorted.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sortMode==='za')sorted.sort((a,b)=>b.name.localeCompare(a.name));
+  document.getElementById('count-badge').textContent=arr.length+' anggota';
+  const wrap=document.getElementById('anggota-list');
+  if(!arr.length){wrap.innerHTML='<div class="empty-state"><div class="es-icon">👥</div><p>Belum ada anggota.<br>Tambah anggota baru di form sebelah!</p></div>';return;}
+  wrap.innerHTML='';
+  sorted.forEach((a,si)=>{
+    const origIdx=arr.findIndex(x=>x.name===a.name&&x.av===a.av);
+    const numDisplay=si+1;
+    const dj=a.defaultJab?`<span class="tag" style="background:rgba(245,158,11,.1);color:var(--accent);border:1px solid rgba(245,158,11,.2)">${shortJab(a.defaultJab)}</span>`:'';
+    wrap.innerHTML+=`<div class="anggota-item" id="item-${origIdx}">
+      <span class="num-badge">${numDisplay}</span>
+      <div class="av ${a.col}">${a.av}</div>
+      <div class="ai-info">
+        <div class="ai-name">${a.name}</div>
+        <div class="ai-meta">Inisial: ${a.av} · Warna: ${colorLabel(a.col)} ${dj}</div>
+      </div>
+      <div class="ai-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editAnggota(${origIdx})" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteAnggota(${origIdx})" title="Hapus">🗑️</button>
+      </div>
+    </div>`;
+  });
+}
+
+function shortJab(n){const map={'Chief Executive Officer (CEO)':'CEO','Chief Operating Officer (COO)':'COO','Chief Human Resources Officer (HR)':'HR','COO Assistant / Logistics Manager':'Logistics','Head Chef':'Head Chef','Chef':'Chef','Staff Senior':'Sr. Staff','Staff Junior':'Jr. Staff','Staff Trainer':'Trainer'};return map[n]||n.split(' ')[0];}
+function colorLabel(c){const m={'av-1':'Kuning','av-2':'Amber','av-3':'Pink','av-4':'Cyan','av-5':'Teal','av-6':'Oranye','av-7':'Ungu'};return m[c]||c;}
+
+function saveAnggota(){
+  const nama=document.getElementById('f-nama').value.trim();
+  if(!nama){toast('Nama tidak boleh kosong!','err');return;}
+  let av=document.getElementById('f-av').value.trim().toUpperCase();
+  if(!av){const parts=nama.split(' ');av=parts.length>=2?(parts[0][0]+parts[1][0]).toUpperCase():nama.slice(0,2).toUpperCase();}
+  const dj=document.getElementById('f-dj').value;
+  const arr=loadAnggota();
+  if(editIdx===-1){
+    const exists=arr.some((a,i)=>a.name.toLowerCase()===nama.toLowerCase());
+    if(exists){toast('Nama sudah ada di daftar!','err');return;}
+    arr.push({name:nama,av,col:selColor,defaultJab:dj});
+    toast('Anggota berhasil ditambahkan! ✅','ok');
+  }else{
+    const exists=arr.some((a,i)=>i!==editIdx&&a.name.toLowerCase()===nama.toLowerCase());
+    if(exists){toast('Nama sudah ada di daftar!','err');return;}
+    arr[editIdx]={name:nama,av,col:selColor,defaultJab:dj};
+    toast('Anggota berhasil diperbarui! ✅','ok');
+    editIdx=-1;
+  }
+  saveAnggotaData(arr);renderList();resetForm();
+  document.getElementById('save-btn').textContent='💾 Simpan Anggota';
+  document.getElementById('edit-indicator').innerHTML='';
+}
+
+function editAnggota(idx){
+  const arr=loadAnggota();
+  const a=arr[idx];editIdx=idx;
+  document.getElementById('f-nama').value=a.name;
+  document.getElementById('f-av').value=a.av;
+  document.getElementById('f-dj').value=a.defaultJab||'';
+  selColor=a.col||'av-1';
+  buildColorGrid();updatePreview();
+  document.getElementById('save-btn').textContent='💾 Update Anggota';
+  document.getElementById('edit-indicator').innerHTML=`<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .9rem;margin-bottom:1rem;font-size:.8rem;color:var(--gold);font-weight:700">✏️ Mode edit: <strong>${a.name}</strong></div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit(){editIdx=-1;resetForm();document.getElementById('save-btn').textContent='💾 Simpan Anggota';document.getElementById('edit-indicator').innerHTML='';}
+
+function deleteAnggota(idx){
+  const arr=loadAnggota();
+  const nama=arr[idx].name;
+  if(!confirm(`Hapus anggota "${nama}"?\n\nData rekap duty anggota ini tetap tersimpan.`))return;
+  arr.splice(idx,1);saveAnggotaData(arr);renderList();
+  toast(nama+' telah dihapus','info');
+  if(editIdx===idx)cancelEdit();
+}
+
+function resetForm(){
+  document.getElementById('f-nama').value='';document.getElementById('f-av').value='';
+  document.getElementById('f-dj').value='';
+  selColor='av-1';buildColorGrid();updatePreview();
+}
+
+function setSort(mode,btn){
+  sortMode=mode;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderList();
+}
+
+function exportData(){
+  const arr=loadAnggota();
+  const blob=new Blob([JSON.stringify({anggota:arr,exported:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pd_anggota_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+  toast('Data anggota berhasil di-export!','ok');
+}
+function importTrigger(){document.getElementById('import-file').click();}
+function importData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const arr=data.anggota||data;
+      if(!Array.isArray(arr)||!arr[0]?.name)throw new Error('Format tidak valid');
+      if(!confirm(`Import ${arr.length} anggota?\nData anggota saat ini akan DIGANTI.`))return;
+      saveAnggotaData(arr);renderList();toast('Import berhasil! '+arr.length+' anggota dimuat','ok');
+    }catch(err){toast('Format JSON tidak valid!','err');}
+  };reader.readAsText(file);input.value='';
+}
+function resetToDefault(){
+  if(!confirm('Reset ke data default bawaan?\nSemua perubahan akan hilang!'))return;
+  saveAnggotaData(JSON.parse(JSON.stringify(DEFAULT_ANGGOTA)));renderList();toast('Data direset ke default','info');
+}
+
+function toast(msg,type){const el=document.createElement('div');el.className='toast '+(type||'info');el.textContent=msg;document.getElementById('toast-c').appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+window.onload=function(){
+  buildColorGrid();buildJabatanSelect();renderList();updatePreview();
+};
+</script>
+</body>
+</html>
