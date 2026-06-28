@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Laporan Duty — Pedagang Lounge</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Luckiest+Guy&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0a00;--bg2:#2a1200;--card:#231000;--card2:#2e1500;--card3:#3a1c00;
+  --border:rgba(200,120,20,0.15);--border2:rgba(200,120,20,0.25);
+  --text:#fff5e6;--muted:#a07850;--accent:#f59e0b;--accent2:#dc6f00;
+  --red:#ef4444;--gold:#fbbf24;--success:#22c55e;--danger:#f43f5e;
+  --r:14px;--rs:9px;
+}
+html{font-size:16px}
+body{font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 700px 500px at 10% 10%,rgba(245,158,11,.07) 0%,transparent 70%),radial-gradient(ellipse 600px 400px at 90% 90%,rgba(220,111,0,.07) 0%,transparent 70%);pointer-events:none;z-index:0;animation:bgShift 8s ease-in-out infinite alternate}
+@keyframes bgShift{0%{opacity:.8}100%{opacity:1}}
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.p{position:absolute;border-radius:50%;animation:float linear infinite;opacity:0}
+@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-20px) rotate(720deg);opacity:0}}
+
+/* HEADER */
+.header{position:relative;z-index:10;background:linear-gradient(135deg,#2a1200,#1a0a00);border-bottom:2px solid rgba(245,158,11,.3);box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.header-inner{max-width:1200px;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.logo-wrap{width:62px;height:62px;flex-shrink:0;border-radius:50%;border:2px solid var(--accent);overflow:hidden;box-shadow:0 0 20px rgba(245,158,11,.4);animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(245,158,11,.4)}50%{box-shadow:0 0 35px rgba(245,158,11,.7)}}
+.logo-wrap img{width:100%;height:100%;object-fit:cover}
+.logo-fallback{width:62px;height:62px;flex-shrink:0;border-radius:50%;border:2px solid var(--accent);background:linear-gradient(135deg,#f59e0b,#dc6f00);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 20px rgba(245,158,11,.4)}
+.header-text h1{font-family:'Luckiest Guy',cursive;font-size:clamp(1.05rem,3vw,1.45rem);letter-spacing:2px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-text p{font-size:clamp(.64rem,1.4vw,.75rem);color:var(--muted);margin-top:2px;font-weight:600}
+.header-badges{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.hbadge{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.06em}
+.hbadge.live{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.35);color:#22c55e;animation:livePulse 2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.7}}
+.hbadge.ver{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--accent)}
+.admin-links{display:flex;gap:6px;flex-wrap:wrap}
+.admin-link{padding:5px 12px;border-radius:20px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.06);color:var(--muted);font-size:.68rem;font-weight:800;text-decoration:none;transition:all .2s;white-space:nowrap}
+.admin-link:hover{color:var(--accent);border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.12)}
+.banner{background:linear-gradient(90deg,transparent,rgba(245,158,11,.08),transparent);border-bottom:1px solid var(--border);padding:.4rem;text-align:center;font-size:.7rem;color:var(--muted);font-weight:700;letter-spacing:.08em;position:relative;z-index:1}
+.banner span{color:var(--accent)}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:clamp(1rem,3vw,2rem) clamp(1rem,3vw,2rem) 5rem;position:relative;z-index:1}
+
+/* NAV TABS */
+.nav-tabs{display:flex;gap:4px;margin-bottom:1.75rem;background:var(--card);border-radius:var(--r);padding:5px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.nav-tab{flex:1;padding:.72rem .5rem;border:none;border-radius:10px;background:transparent;color:var(--muted);font-size:clamp(.7rem,1.8vw,.88rem);font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
+.nav-tab:hover{color:var(--text);background:rgba(245,158,11,.06)}
+.nav-tab.active{background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(220,111,0,.15));color:var(--accent);border:1px solid rgba(245,158,11,.25);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.tab-panel{display:none;animation:fadeIn .3s ease}
+.tab-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(1.2rem,3vw,2rem);margin-bottom:1rem;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:border-color .2s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)}
+.card-title{font-size:clamp(.95rem,2.5vw,1.1rem);font-weight:800;margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.card-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.ci-gold{background:rgba(251,191,36,.15)}.ci-amber{background:rgba(245,158,11,.15)}.ci-red{background:rgba(239,68,68,.15)}.ci-brown{background:rgba(139,69,19,.15)}.ci-green{background:rgba(34,197,94,.15)}
+.g-text{background:linear-gradient(90deg,#fbbf24,#f59e0b,#dc6f00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:660px){.g2{grid-template-columns:1fr}}
+
+.field{display:flex;flex-direction:column;gap:.5rem}
+.field label{font-size:clamp(.68rem,1.5vw,.75rem);font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.req{color:var(--danger);margin-left:2px}
+
+input[type=date],input[type=time],input[type=text],input[type=password],select,textarea{
+  width:100%;background:var(--card2);border:1px solid var(--border2);
+  border-radius:var(--rs);color:var(--text);font-size:clamp(.88rem,2vw,1rem);
+  padding:.78rem 1rem;outline:none;transition:border-color .15s,box-shadow .15s;
+  font-family:inherit;-webkit-appearance:none;appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.13)}
+textarea{resize:vertical;min-height:95px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23a07850' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem;cursor:pointer}
+select option{background:#2a1200}
+
+/* CUSTOM DROPDOWN */
+.cs-wrap{position:relative}
+.cs-btn{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:var(--rs);color:#fff5e6;font-size:clamp(.88rem,2vw,1rem);padding:.78rem 1rem;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;font-family:inherit}
+.cs-btn:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.13)}
+.cs-btn .ph{color:#c8a878;font-style:italic}
+.cs-btn .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.cs-btn .chev{margin-left:auto;color:#c8a878;font-size:10px;transition:transform .2s;flex-shrink:0}
+.cs-btn.open .chev{transform:rotate(180deg)}
+.cs-btn.open,.cs-btn:focus{border-color:var(--accent)}
+.dp{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#2a1200;border:1px solid rgba(245,158,11,.3);border-radius:var(--rs);z-index:300;display:none;box-shadow:0 12px 40px rgba(0,0,0,.6);max-height:320px;overflow-y:auto}
+.dp.open{display:block}
+.cs-wrap:has(.dp.open){z-index:50}
+.dp::-webkit-scrollbar{width:4px}
+.dp::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:2px}
+.di{padding:.82rem 1rem;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s;font-size:clamp(.85rem,2vw,.95rem)}
+.di:hover{background:rgba(245,158,11,.08)}
+.di.sel{background:rgba(245,158,11,.12);color:var(--accent)}
+.di .dinum{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--muted);flex-shrink:0}
+.di.sel .dinum{background:rgba(245,158,11,.2);color:var(--accent)}
+.di .diav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.di .dibadge{margin-left:auto;font-size:.67rem;padding:3px 9px;border-radius:10px;font-weight:700;white-space:nowrap}
+
+/* SHIFTS */
+.shifts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spill{padding:1rem .85rem;border-radius:var(--rs);border:1px solid var(--border2);background:var(--card2);cursor:pointer;transition:all .2s;text-align:center;user-select:none;position:relative}
+.spill:hover{border-color:var(--accent);transform:translateY(-1px)}
+.spill.active{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.4)}
+.spill .snum{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.spill .sname{font-size:clamp(.9rem,2vw,1rem);font-weight:700}
+.spill .stime{font-size:.78rem;color:var(--muted);margin-top:3px}
+.spill.s1 .snum{color:#fbbf24}.spill.s1.active{border-color:#fbbf24;background:rgba(251,191,36,.1);box-shadow:0 4px 15px rgba(251,191,36,.2)}
+.spill.s2 .snum{color:#f97316}.spill.s2.active{border-color:#f97316;background:rgba(249,115,22,.1);box-shadow:0 4px 15px rgba(249,115,22,.2)}
+.spill.s3 .snum{color:#f472b6}.spill.s3.active{border-color:#f472b6;background:rgba(244,114,182,.1);box-shadow:0 4px 15px rgba(244,114,182,.2)}
+.spill.s4 .snum{color:#9d6fff}.spill.s4.active{border-color:#9d6fff;background:rgba(157,111,255,.1);box-shadow:0 4px 15px rgba(157,111,255,.2)}
+
+.jam-selected{margin-top:.85rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.78rem 1rem;display:none;animation:fadeIn .2s ease}
+.jam-selected .js-label{font-size:.68rem;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.jam-selected .js-val{font-size:clamp(.9rem,2vw,1rem);font-weight:800;color:var(--text)}
+
+.upzone{border:2px dashed var(--border2);border-radius:var(--rs);padding:2rem 1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:var(--card2)}
+.upzone:hover,.upzone.drag{border-color:var(--accent);background:rgba(245,158,11,.04)}
+.upzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-icon{font-size:2.2rem;margin-bottom:.6rem;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.up-text{font-size:.88rem;color:var(--muted)}
+.up-text strong{color:var(--accent)}
+.up-preview{display:none;gap:10px;flex-wrap:wrap;margin-top:.85rem;justify-content:center}
+.up-preview.show{display:flex}
+.prev-img{width:88px;height:88px;object-fit:cover;border-radius:8px;border:1px solid var(--border2);transition:transform .2s}
+.prev-img:hover{transform:scale(1.05)}
+.prev-cnt{width:88px;height:88px;background:rgba(245,158,11,.1);border-radius:8px;border:1px solid rgba(245,158,11,.25);display:flex;align-items:center;justify-content:center;font-size:.88rem;color:var(--accent);font-weight:800}
+
+.autofill-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.78rem 1rem;margin-top:.6rem;display:none;animation:fadeIn .2s ease}
+.autofill-box .af-label{font-size:.68rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.autofill-box .af-text{font-size:.88rem;color:rgba(251,191,36,.85)}
+
+/* IZIN DATE BLOCK */
+.tiz-block{background:var(--card2);border:1px solid var(--border2);border-radius:var(--rs);padding:1.1rem 1.2rem;margin-bottom:1.25rem}
+.tiz-section-label{font-size:clamp(.68rem,1.5vw,.75rem);font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.tiz-divider{height:1px;background:rgba(245,158,11,.12);margin:1rem 0}
+.tiz-masuk-row{display:flex;align-items:center;gap:10px}
+.tiz-masuk-row input[type=date]{flex:1;min-width:0}
+.tiz-arrow{color:var(--accent);font-size:1.1rem;font-weight:800;flex-shrink:0}
+.range-badge{margin-top:.65rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.55rem .9rem;font-size:.88rem;font-weight:700;color:var(--accent);animation:fadeIn .2s ease;display:none}
+
+.btn-send{width:100%;padding:1.1rem;border:none;border-radius:var(--r);font-size:clamp(.92rem,2vw,1.05rem);font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;transition:all .2s;letter-spacing:.02em;position:relative;overflow:hidden}
+.btn-send::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.05) 50%,transparent 70%);transform:translateX(-100%);transition:transform .4s}
+.btn-send:hover::before{transform:translateX(100%)}
+.btn-send:active{transform:scale(.98)}
+.btn-send:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-duty{background:linear-gradient(135deg,#f59e0b,#dc6f00);color:white;box-shadow:0 4px 20px rgba(245,158,11,.35)}
+.btn-duty:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 6px 28px rgba(245,158,11,.5)}
+.btn-izin{background:linear-gradient(135deg,#dc6f00,#b45309);color:white;box-shadow:0 4px 20px rgba(220,111,0,.35)}
+.btn-izin:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 6px 28px rgba(220,111,0,.5)}
+.btn-sm{padding:.72rem 1.15rem;font-size:.88rem;font-weight:700;border-radius:var(--rs);border:none;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn-sm:active{transform:scale(.97)}
+.btn-ghost{background:var(--card2);color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+.btn-danger{background:rgba(244,63,94,.1);color:var(--danger);border:1px solid rgba(244,63,94,.2)}
+
+.preview-wrap{background:var(--card2);border:1px solid rgba(245,158,11,.2);border-radius:var(--r);padding:1.35rem;display:none;margin-top:1rem}
+.preview-wrap.show{display:block;animation:fadeIn .3s ease}
+.prev-title{font-weight:800;color:var(--accent);font-size:.95rem;margin-bottom:.85rem}
+.prev-row{display:flex;gap:10px;padding:6px 0;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.prev-row:last-child{border-bottom:none}
+.prev-k{color:var(--muted);min-width:130px;flex-shrink:0;font-weight:700}
+.prev-v{color:var(--text);font-weight:700}
+
+.status{padding:.8rem 1.1rem;border-radius:var(--rs);font-size:.88rem;font-weight:700;display:none;margin-top:.85rem;align-items:center;gap:8px}
+.status.show{display:flex}
+.status.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#22c55e}
+.status.err{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:var(--danger)}
+
+#toast-c{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 2rem)}
+.toast{padding:.75rem 1.25rem;border-radius:var(--rs);font-size:.9rem;font-weight:700;color:white;max-width:340px;animation:tIn .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.toast.ok{background:linear-gradient(135deg,#059669,#10b981)}
+.toast.err{background:linear-gradient(135deg,#be123c,#f43f5e)}
+.toast.info{background:linear-gradient(135deg,#b45309,#f59e0b)}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:sp .6s linear infinite;display:none;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border:1px solid rgba(245,158,11,.3);border-radius:var(--r);padding:2rem;width:100%;max-width:400px;text-align:center;animation:fadeIn .3s ease}
+.modal h2{font-size:1.15rem;font-weight:800;margin-bottom:.5rem}
+.modal p{font-size:.88rem;color:var(--muted);margin-bottom:1.35rem}
+.modal input{text-align:center;font-size:1rem;letter-spacing:.1em;margin-bottom:1rem}
+.modal-btns{display:flex;gap:10px}
+.modal-btns button{flex:1}
+
+/* REKAP */
+.rekap-panel{display:none}
+.rekap-panel.show{display:block;animation:fadeIn .3s ease}
+.av-1{background:rgba(251,191,36,.25);color:#fbbf24}.av-2{background:rgba(245,158,11,.25);color:#f59e0b}
+.av-3{background:rgba(244,114,182,.25);color:#f472b6}.av-4{background:rgba(34,211,238,.25);color:#22d3ee}
+.av-5{background:rgba(45,212,191,.25);color:#2dd4bf}.av-6{background:rgba(249,115,22,.25);color:#f97316}.av-7{background:rgba(157,111,255,.25);color:#a78bfa}
+.shift-block{margin-bottom:1.25rem;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.shift-header{padding:.75rem 1.1rem;display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:800}
+.sh-s1{background:rgba(251,191,36,.1);border-bottom:1px solid rgba(251,191,36,.2);color:#fbbf24}
+.sh-s2{background:rgba(249,115,22,.1);border-bottom:1px solid rgba(249,115,22,.2);color:#f97316}
+.sh-s3{background:rgba(244,114,182,.1);border-bottom:1px solid rgba(244,114,182,.2);color:#f472b6}
+.sh-s4{background:rgba(157,111,255,.1);border-bottom:1px solid rgba(157,111,255,.2);color:#a78bfa}
+.shift-entry{padding:.65rem 1.1rem;font-size:.9rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.shift-entry:last-child{border-bottom:none}
+.se-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.se-dot-s1{background:#fbbf24}.se-dot-s2{background:#f97316}.se-dot-s3{background:#f472b6}.se-dot-s4{background:#a78bfa}.se-dot-izin{background:#ef4444}
+.entry-izin{color:var(--danger);font-weight:700}
+.total-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:1rem}
+.total-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:.88rem 1.1rem;display:flex;align-items:center;gap:10px}
+.tc-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.tc-info .tc-name{font-size:.9rem;font-weight:700;color:var(--text)}
+.tc-info .tc-count{font-size:.75rem;color:var(--accent);font-weight:800}
+
+@media(max-width:520px){
+  .header-inner{padding:.85rem 1rem}
+  .logo-wrap,.logo-fallback{width:50px;height:50px;font-size:22px}
+  .nav-tab{padding:.6rem .2rem;font-size:.68rem;gap:3px}
+  .card{padding:1rem 1rem}
+  .tiz-masuk-row{flex-direction:column;gap:6px}
+  .tiz-arrow{transform:rotate(90deg);align-self:center}
+  #toast-c{bottom:1rem;right:.75rem;left:.75rem;max-width:none}
+  .toast{max-width:100%}
+}
+@media(min-width:900px){.main{padding:2rem 2.5rem 5rem}}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:rgba(245,158,11,.2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-wrap" id="logo-wrap">
+      <img src="pedagang_logo.png" alt="Logo" onerror="this.parentElement.style.display='none';document.getElementById('logo-fallback').style.display='flex'"/>
+    </div>
+    <div class="logo-fallback" id="logo-fallback" style="display:none">🍜</div>
+    <div class="header-text">
+      <h1>Pedagang Lounge</h1>
+      <p>Sistem Laporan Duty &amp; Izin — Official v4.1</p>
+    </div>
+    <div class="header-badges">
+      <div class="admin-links">
+        <a href="anggota.html" class="admin-link">👥 Kelola Anggota</a>
+        <a href="jabatan.html" class="admin-link">🏷️ Kelola Jabatan</a>
+      </div>
+      <div class="hbadge live">● LIVE</div>
+      <div class="hbadge ver">v4.1</div>
+    </div>
+  </div>
+</div>
+<div class="banner">Dibuat oleh <span>KazuyaPiniko</span> — Pedagang Lounge System © 2026 · <span>Data dimuat dari Manajemen Anggota &amp; Jabatan</span></div>
+
+<div class="main">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('duty',this)">📋 Laporan Duty</button>
+    <button class="nav-tab" onclick="switchTab('izin',this)">🙏 Sistem Izin</button>
+    <button class="nav-tab" onclick="openRekap()">📊 Rekap Duty</button>
+  </div>
+
+  <!-- TAB DUTY -->
+  <div class="tab-panel active" id="tab-duty">
+    <div class="card">
+      <div class="card-title"><div class="card-icon ci-gold">👤</div><span class="g-text">Identitas Anggota</span></div>
+      <div class="g2">
+        <div class="field">
+          <label>Nama Anggota <span class="req">*</span></label>
+          <div class="cs-wrap">
+            <button class="cs-btn" id="d-nama-btn" onclick="toggleDp('d-nama')">
+              <span id="d-nama-av" class="av av-1" style="display:none"></span>
+              <span id="d-nama-disp" class="ph">— Pilih Nama —</span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="dp" id="d-nama-dp"></div>
+          </div>
+          <div class="autofill-box" id="d-autofill">
+            <div class="af-label">⚡ Auto-isi Aktif</div>
+            <div class="af-text" id="d-autofill-text"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Jabatan <span class="req">*</span></label>
+          <div class="cs-wrap">
+            <button class="cs-btn" id="d-jab-btn" onclick="toggleDp('d-jab')">
+              <span id="d-jab-disp" class="ph">— Pilih Jabatan —</span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="dp" id="d-jab-dp"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-icon ci-amber">⏰</div><span class="g-text">Waktu Duty</span></div>
+      <div class="field" style="margin-bottom:1.1rem">
+        <label>Tanggal <span class="req">*</span></label>
+        <input type="date" id="d-tanggal"/>
+      </div>
+      <div class="field">
+        <label>Pilih Shift <span class="req">*</span></label>
+        <div class="shifts" id="d-shifts">
+          <div class="spill s1" onclick="pickShift(1,this)"><div class="snum">☀️ Shift 1</div><div class="sname">Siang</div><div class="stime">13:00 — 15:00</div></div>
+          <div class="spill s2" onclick="pickShift(2,this)"><div class="snum">🌇 Shift 2</div><div class="sname">Sore</div><div class="stime">15:45 — 17:45</div></div>
+          <div class="spill s3" onclick="pickShift(3,this)"><div class="snum">🌆 Shift 3</div><div class="sname">Sore</div><div class="stime">19:00 — 21:00</div></div>
+          <div class="spill s4" onclick="pickShift(4,this)"><div class="snum">🌙 Shift 4</div><div class="sname">Malam</div><div class="stime">22:00 — 00:00</div></div>
+        </div>
+      </div>
+      <div class="g2" style="margin-top:1.1rem">
+        <div class="field">
+          <label>🕐 Dari Jam <span class="req">*</span></label>
+          <input type="time" id="d-jam-mulai" oninput="updateDurasi()"/>
+        </div>
+        <div class="field">
+          <label>🕐 Ke Jam <span class="req">*</span></label>
+          <input type="time" id="d-jam-selesai" oninput="updateDurasi()"/>
+        </div>
+      </div>
+      <div class="jam-selected" id="d-jam-box">
+        <div class="js-label">⏱️ Durasi Duty</div>
+        <div class="js-val" id="d-jam-display">—</div>
+      </div>
+      <input type="hidden" id="d-shift-val"/>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-icon ci-red">📸</div><span class="g-text">Screenshot Duty</span></div>
+      <div class="upzone" id="d-upzone">
+        <input type="file" id="d-screenshot" accept="image/*" multiple onchange="handleFiles('d',this.files)"/>
+        <div class="up-icon">🖼️</div>
+        <div class="up-text"><strong>Klik atau drag &amp; drop</strong> screenshot di sini<br><span style="font-size:.8rem">PNG, JPG — bisa lebih dari 1 file</span></div>
+        <div class="up-preview" id="d-preview"></div>
+      </div>
+      <div class="field" style="margin-top:.95rem">
+        <label>Keterangan Tambahan</label>
+        <textarea id="d-ket" placeholder="Catatan, kejadian, laporan, dll..."></textarea>
+      </div>
+    </div>
+
+    <div class="preview-wrap" id="d-prev-wrap">
+      <div class="prev-title">📋 Preview Laporan Duty</div>
+      <div id="d-prev-content"></div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(220,111,0,.04));border-color:rgba(245,158,11,.2)">
+      <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+        <button class="btn-sm btn-ghost" onclick="updateDutyPreview()">👁️ Preview</button>
+        <button class="btn-sm btn-danger" onclick="resetDuty()">🔄 Reset</button>
+      </div>
+      <button class="btn-send btn-duty" id="d-btn" onclick="submitDuty()">
+        <div class="spin" id="d-spin"></div>
+        ⚡ Kirim Laporan Duty ke Discord
+      </button>
+      <div class="status" id="d-status"></div>
+    </div>
+  </div>
+
+  <!-- TAB IZIN -->
+  <div class="tab-panel" id="tab-izin">
+    <div class="card">
+      <div class="card-title"><div class="card-icon ci-brown">🙏</div><span class="g-text">Form Permohonan Izin</span></div>
+      <div class="g2" style="margin-bottom:1.25rem">
+        <div class="field">
+          <label>Nama Anggota <span class="req">*</span></label>
+          <div class="cs-wrap">
+            <button class="cs-btn" id="i-nama-btn" onclick="toggleDp('i-nama')">
+              <span id="i-nama-av" class="av av-2" style="display:none"></span>
+              <span id="i-nama-disp" class="ph">— Pilih Nama —</span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="dp" id="i-nama-dp"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Jabatan <span class="req">*</span></label>
+          <div class="cs-wrap">
+            <button class="cs-btn" id="i-jab-btn" onclick="toggleDp('i-jab')">
+              <span id="i-jab-disp" class="ph">— Pilih Jabatan —</span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="dp" id="i-jab-dp"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tiz-block">
+        <div class="tiz-section-label">Tanggal Izin <span class="req">*</span></div>
+        <input type="date" id="i-tanggal" onchange="updateRangeDisplay()"/>
+        <div class="tiz-divider"></div>
+        <div class="tiz-section-label">Masuk Izin <span class="req">*</span> <span style="font-weight:600;color:var(--muted);font-size:.65rem;text-transform:none;letter-spacing:0">(dari hari → ke hari)</span></div>
+        <div class="tiz-masuk-row">
+          <input type="date" id="i-dari" onchange="updateRangeDisplay()"/>
+          <div class="tiz-arrow">→</div>
+          <input type="date" id="i-ke" onchange="updateRangeDisplay()"/>
+        </div>
+        <div class="range-badge" id="range-badge"></div>
+      </div>
+
+      <div class="field" style="margin-bottom:1.25rem">
+        <label>Alasan / Reason <span class="req">*</span></label>
+        <textarea id="i-reason" placeholder="Jelaskan alasan izin dengan jelas..." style="min-height:110px"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Shift yang Ditinggalkan <span class="req">*</span></label>
+        <div class="shifts" id="i-shifts">
+          <div class="spill s1" onclick="pickIzinShift(1,this)"><div class="snum">☀️ Shift 1</div><div class="sname">Siang</div><div class="stime">13:00 — 15:00</div></div>
+          <div class="spill s2" onclick="pickIzinShift(2,this)"><div class="snum">🌇 Shift 2</div><div class="sname">Sore</div><div class="stime">15:45 — 17:45</div></div>
+          <div class="spill s3" onclick="pickIzinShift(3,this)"><div class="snum">🌆 Shift 3</div><div class="sname">Sore</div><div class="stime">19:00 — 21:00</div></div>
+          <div class="spill s4" onclick="pickIzinShift(4,this)"><div class="snum">🌙 Shift 4</div><div class="sname">Malam</div><div class="stime">22:00 — 00:00</div></div>
+        </div>
+        <div class="jam-selected" id="i-jam-box">
+          <div class="js-label">🕐 Shift Ditinggalkan</div>
+          <div class="js-val" id="i-jam-display">—</div>
+        </div>
+        <input type="hidden" id="i-shift-val"/>
+      </div>
+    </div>
+
+    <div class="preview-wrap" id="i-prev-wrap">
+      <div class="prev-title">🙏 Preview Permohonan Izin</div>
+      <div id="i-prev-content"></div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,rgba(220,111,0,.06),rgba(180,83,9,.04));border-color:rgba(220,111,0,.2)">
+      <div style="display:flex;gap:8px;margin-bottom:1rem">
+        <button class="btn-sm btn-ghost" onclick="updateIzinPreview()">👁️ Preview</button>
+        <button class="btn-sm btn-danger" onclick="resetIzin()">🔄 Reset</button>
+      </div>
+      <button class="btn-send btn-izin" id="i-btn" onclick="submitIzin()">
+        <div class="spin" id="i-spin"></div>
+        🙏 Kirim Permohonan Izin ke Discord
+      </button>
+      <div class="status" id="i-status"></div>
+    </div>
+  </div>
+
+  <!-- TAB REKAP -->
+  <div class="tab-panel" id="tab-rekap">
+    <div class="card" style="text-align:center;padding:2.5rem" id="rekap-lock-card">
+      <div style="font-size:3.5rem;margin-bottom:1rem;animation:bounce 2s infinite">🍜</div>
+      <div class="g-text" style="font-family:'Luckiest Guy',cursive;font-size:1.3rem;margin-bottom:.5rem;letter-spacing:2px">REKAP DUTY MINGGUAN</div>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">Fitur terkunci. Masukkan password untuk melihat rekap duty anggota.</p>
+      <button class="btn-send btn-duty" style="max-width:280px;margin:0 auto;font-size:.92rem;padding:.85rem" onclick="showPasswordModal()">🔐 Buka dengan Password</button>
+    </div>
+    <div class="rekap-panel" id="rekap-content"></div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border);position:relative;z-index:1">
+  🍜 <strong style="color:var(--text)">Pedagang Lounge</strong> — Sistem Laporan Duty v4.1<br>
+  <span style="color:var(--accent)">By KazuyaPiniko</span> · Built with passion · 2026
+</div>
+
+<div class="modal-bg" id="pw-modal">
+  <div class="modal">
+    <div style="font-size:2.5rem;margin-bottom:.75rem">🔐</div>
+    <h2>Akses Rekap Duty</h2>
+    <p>Masukkan password untuk melihat rekap duty mingguan</p>
+    <input type="password" id="pw-input" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div id="pw-err" style="color:var(--danger);font-size:.82rem;margin-bottom:.75rem;display:none">Password salah!</div>
+    <div class="modal-btns">
+      <button class="btn-sm btn-ghost" onclick="closePwModal()" style="flex:1;justify-content:center">Batal</button>
+      <button class="btn-sm btn-duty" onclick="checkPw()" style="flex:1;justify-content:center;padding:.65rem 1rem">🔓 Buka</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-c"></div>
+
+<script>
+// ===================== CONFIG =====================
+const CFG={
+  discordDuty:'https://discord.com/api/webhooks/1520434383184466022/gEeaiSZKaKvOLp5qV4a5VLWfMiNivPOK57tEEj2ssKc2J2dAWNPo6S1A_8gF53yoLmMa',
+  discordRekap:'https://discord.com/api/webhooks/1520440141129322647/xmFI3RLhOKvae8Mvn5qiLlNznWHCMVFvAUAoA1rTI0WLvYszkK5Q-LZcN0Cbdhzg4FzY',
+  discordGaji:'https://discord.com/api/webhooks/1520469644698325224/0MzvdwbBuMBpLdsEjC4N9IurGbLMpAZ_i_Gut2fFzy5blAybEVHLTqNv3tVD8YZ5OGk-',
+  roleIds:['1381525365259898970','1381529522972917791','1381547157051670538','1381547491585163325'],
+  pw:'kazuyapiniko',
+  izinMenit:120,
+  izinPotongan:{1:0,2:5,3:10},
+};
+
+const ANGGOTA_KEY='pd_anggota_v4';
+const JABATAN_KEY='pd_jabatan_v4';
+
+// Default fallback jika localStorage kosong (pertama kali buka)
+const DEFAULT_ANGGOTA=[
+  {name:'Keyaru Louvent',av:'KL',col:'av-1',defaultJab:'Chief Executive Officer (CEO)'},
+  {name:'Celine Felicia',av:'CF',col:'av-3',defaultJab:''},
+  {name:'Ami Queen',av:'AQ',col:'av-5',defaultJab:''},
+  {name:'Celinad Felicia',av:'CF',col:'av-3',defaultJab:''},
+  {name:'Naisha Mayra',av:'NM',col:'av-4',defaultJab:''},
+  {name:'Alexiee Louvent',av:'AL',col:'av-2',defaultJab:'Chief Operating Officer (COO)'},
+  {name:'Keyra Louvent',av:'KL',col:'av-1',defaultJab:'Chief Operating Officer (COO)'},
+  {name:'Aan Darsh',av:'AD',col:'av-6',defaultJab:''},
+  {name:'Brahmanta Sebastian',av:'BS',col:'av-7',defaultJab:''},
+  {name:'Dio Arya',av:'DA',col:'av-2',defaultJab:''},
+  {name:'Exxa Akashie',av:'EA',col:'av-5',defaultJab:''},
+  {name:'Imanuel Wasington',av:'IW',col:'av-4',defaultJab:''},
+  {name:'Oscar Gorbunov',av:'OG',col:'av-6',defaultJab:''},
+  {name:'Ricardo Gerrard',av:'RG',col:'av-7',defaultJab:''},
+  {name:'Trafalgar Paul',av:'TP',col:'av-1',defaultJab:''},
+];
+const DEFAULT_JABATAN=[
+  {name:'Chief Executive Officer (CEO)',short:'CEO',cls:'r-ceo',color:'#fbbf24',bg:'rgba(251,191,36,.15)',gajiF:65000,gajiH:32500},
+  {name:'Chief Operating Officer (COO)',short:'COO',cls:'r-coo',color:'#f59e0b',bg:'rgba(245,158,11,.15)',gajiF:62000,gajiH:31000},
+  {name:'Chief Human Resources Officer (HR)',short:'HR',cls:'r-hr',color:'#f472b6',bg:'rgba(244,114,182,.15)',gajiF:59000,gajiH:29500},
+  {name:'COO Assistant / Logistics Manager',short:'Logistics',cls:'r-log',color:'#22d3ee',bg:'rgba(34,211,238,.15)',gajiF:56000,gajiH:28000},
+  {name:'Head Chef',short:'Head Chef',cls:'r-hc',color:'#f97316',bg:'rgba(249,115,22,.15)',gajiF:53000,gajiH:26500},
+  {name:'Chef',short:'Chef',cls:'r-chef',color:'#ef4444',bg:'rgba(239,68,68,.15)',gajiF:50000,gajiH:25000},
+  {name:'Staff Senior',short:'Sr. Staff',cls:'r-ss',color:'#2dd4bf',bg:'rgba(45,212,191,.15)',gajiF:45000,gajiH:22500},
+  {name:'Staff Junior',short:'Jr. Staff',cls:'r-sj',color:'#a78bfa',bg:'rgba(157,111,255,.15)',gajiF:35000,gajiH:17500},
+  {name:'Staff Trainer',short:'Trainer',cls:'r-st',color:'#22c55e',bg:'rgba(34,197,94,.15)',gajiF:30000,gajiH:15000},
+];
+
+const SHIFTS=[
+  {num:1,label:'Shift 1 — Siang',time:'13:00 — 15:00',mulai:'13:00',selesai:'15:00',emoji:'☀️',dotCls:'se-dot-s1',headerCls:'sh-s1'},
+  {num:2,label:'Shift 2 — Sore',time:'15:45 — 17:45',mulai:'15:45',selesai:'17:45',emoji:'🌇',dotCls:'se-dot-s2',headerCls:'sh-s2'},
+  {num:3,label:'Shift 3 — Sore',time:'19:00 — 21:00',mulai:'19:00',selesai:'21:00',emoji:'🌆',dotCls:'se-dot-s3',headerCls:'sh-s3'},
+  {num:4,label:'Shift 4 — Malam',time:'22:00 — 00:00',mulai:'22:00',selesai:'00:00',emoji:'🌙',dotCls:'se-dot-s4',headerCls:'sh-s4'},
+];
+
+// ===================== LOAD DATA =====================
+function getAnggota(){
+  const d=localStorage.getItem(ANGGOTA_KEY);
+  if(!d){localStorage.setItem(ANGGOTA_KEY,JSON.stringify(DEFAULT_ANGGOTA));return DEFAULT_ANGGOTA;}
+  return JSON.parse(d);
+}
+function getJabatan(){
+  const d=localStorage.getItem(JABATAN_KEY);
+  if(!d){localStorage.setItem(JABATAN_KEY,JSON.stringify(DEFAULT_JABATAN));return DEFAULT_JABATAN;}
+  return JSON.parse(d);
+}
+
+let state={d:{nama:'',jabatan:'',shift:null,files:[]},i:{nama:'',jabatan:'',shift:null}};
+
+// ===================== INIT =====================
+window.onload=function(){
+  buildParticles();
+  buildDropdowns();
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('d-tanggal').value=today;
+  document.getElementById('i-tanggal').value=today;
+  document.getElementById('i-dari').value=today;
+  document.getElementById('i-ke').value=today;
+  updateRangeDisplay();
+  setupDrag('d-upzone','d');
+  checkWeeklyRekap();
+};
+
+function buildParticles(){
+  const wrap=document.getElementById('particles');
+  const cols=['rgba(245,158,11,.4)','rgba(251,191,36,.3)','rgba(220,111,0,.3)','rgba(139,69,19,.2)'];
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');p.className='p';
+    const s=Math.random()*6+3;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*4)]};animation-duration:${Math.random()*15+8}s;animation-delay:${Math.random()*10}s;`;
+    wrap.appendChild(p);
+  }
+}
+
+function buildDropdowns(){
+  const ANGGOTA=getAnggota();
+  const JABATAN=getJabatan();
+
+  // DUTY: nama
+  const dndp=document.getElementById('d-nama-dp');dndp.innerHTML='';
+  ANGGOTA.forEach((a,i)=>{dndp.innerHTML+=`<div class="di" onclick="selNama('d','${escQ(a.name)}','${a.av}','${a.col}',this)"><span class="dinum">${i+1}</span><span class="diav ${a.col}">${a.av}</span>${a.name}</div>`;});
+
+  // DUTY: jabatan
+  buildJabDp('d-jab-dp',JABATAN);
+
+  // IZIN: nama
+  const indp=document.getElementById('i-nama-dp');indp.innerHTML='';
+  ANGGOTA.forEach((a,i)=>{indp.innerHTML+=`<div class="di" onclick="selNama('i','${escQ(a.name)}','${a.av}','${a.col}',this)"><span class="dinum">${i+1}</span><span class="diav ${a.col}">${a.av}</span>${a.name}</div>`;});
+
+  // IZIN: jabatan
+  buildJabDp('i-jab-dp',JABATAN);
+}
+
+function escQ(s){return s.replace(/'/g,"\\'");}
+
+function buildJabDp(dpId,jabList){
+  const dp=document.getElementById(dpId);dp.innerHTML='';
+  jabList.forEach((j,i)=>{
+    const badgeStyle=`background:${j.bg||'rgba(245,158,11,.15)'};color:${j.color||'#f59e0b'}`;
+    dp.innerHTML+=`<div class="di" onclick="selJab('${dpId.startsWith('d')?'d':'i'}','${escQ(j.name)}','${j.short}',this)"><span class="dinum">${i+1}</span>${j.name}<span class="dibadge" style="${badgeStyle}">${j.short}</span></div>`;
+  });
+}
+
+function toggleDp(id){const dp=document.getElementById(id+'-dp');const btn=document.getElementById(id+'-btn');const open=dp.classList.contains('open');closeAllDp();if(!open){dp.classList.add('open');btn.classList.add('open');}}
+function closeAllDp(){document.querySelectorAll('.dp').forEach(d=>d.classList.remove('open'));document.querySelectorAll('.cs-btn').forEach(b=>b.classList.remove('open'));}
+document.addEventListener('click',e=>{if(!e.target.closest('.cs-wrap'))closeAllDp();});
+
+function selNama(prefix,name,av,col,el){
+  el.closest('.dp').querySelectorAll('.di').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');
+  const avEl=document.getElementById(prefix+'-nama-av');avEl.textContent=av;avEl.className='av '+col;avEl.style.display='flex';
+  const disp=document.getElementById(prefix+'-nama-disp');disp.textContent=name;disp.classList.remove('ph');
+  state[prefix].nama=name;closeAllDp();
+  // Auto-isi jabatan dari defaultJab
+  const ANGGOTA=getAnggota();const JABATAN=getJabatan();
+  const anggota=ANGGOTA.find(a=>a.name===name);
+  if(anggota&&anggota.defaultJab){
+    const jab=JABATAN.find(j=>j.name===anggota.defaultJab);
+    if(jab)selJabByData(prefix,jab);
+  }
+  if(prefix==='d'){
+    document.getElementById('d-autofill').style.display='block';
+    document.getElementById('d-autofill-text').textContent='✨ '+name+' — Tanggal hari ini otomatis terisi';
+    document.getElementById('d-tanggal').value=new Date().toISOString().split('T')[0];
+  }
+}
+function selJabByData(prefix,j){
+  const dpId=prefix+'-jab-dp';
+  document.getElementById(dpId).querySelectorAll('.di').forEach(d=>{if(d.textContent.includes(j.name))d.classList.add('sel');else d.classList.remove('sel');});
+  const disp=document.getElementById(prefix+'-jab-disp');disp.textContent=j.name;disp.classList.remove('ph');state[prefix].jabatan=j.name;
+}
+function selJab(prefix,name,short,el){
+  el.closest('.dp').querySelectorAll('.di').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');
+  const disp=document.getElementById(prefix+'-jab-disp');disp.textContent=name;disp.classList.remove('ph');state[prefix].jabatan=name;closeAllDp();
+}
+
+function pickShift(num,el){
+  document.querySelectorAll('#d-shifts .spill').forEach(s=>s.classList.remove('active'));el.classList.add('active');
+  const s=SHIFTS[num-1];state.d.shift=s;document.getElementById('d-shift-val').value=s.label;
+  document.getElementById('d-jam-mulai').value=s.mulai;document.getElementById('d-jam-selesai').value=s.selesai;updateDurasi();
+}
+function pickIzinShift(num,el){
+  document.querySelectorAll('#i-shifts .spill').forEach(s=>s.classList.remove('active'));el.classList.add('active');
+  const s=SHIFTS[num-1];state.i.shift=s;document.getElementById('i-shift-val').value=s.label;
+  document.getElementById('i-jam-box').style.display='block';
+  document.getElementById('i-jam-display').textContent=s.emoji+' '+s.label+' · Jam '+s.mulai+' → '+s.selesai;
+}
+
+function updateRangeDisplay(){
+  const dari=document.getElementById('i-dari').value;const ke=document.getElementById('i-ke').value;
+  const badge=document.getElementById('range-badge');
+  if(!dari&&!ke){badge.style.display='none';return;}
+  if(dari&&ke){
+    const diffDays=Math.round((new Date(ke+'T00:00:00')-new Date(dari+'T00:00:00'))/(864e5));
+    badge.textContent='📅 '+fmtDate(dari)+' → '+fmtDate(ke)+'  ·  '+(diffDays===0?'1 hari':(diffDays+1)+' hari');
+  }else{badge.textContent='📅 '+(dari?fmtDate(dari):'?')+' → '+(ke?fmtDate(ke):'?');}
+  badge.style.display='block';
+}
+
+function updateDurasi(){
+  const mulai=document.getElementById('d-jam-mulai').value;const selesai=document.getElementById('d-jam-selesai').value;
+  const box=document.getElementById('d-jam-box');if(!mulai||!selesai){box.style.display='none';return;}
+  const[mH,mM]=mulai.split(':').map(Number);const[sH,sM]=selesai.split(':').map(Number);
+  let t=(sH*60+sM)-(mH*60+mM);if(t<0)t+=1440;
+  const j=Math.floor(t/60);const m=t%60;
+  box.style.display='block';
+  document.getElementById('d-jam-display').textContent='🕐 '+mulai+' → '+selesai+'  ·  ⏱️ Durasi: '+(j>0?j+'j '+(m>0?m+'m':''):m+'m');
+}
+
+function handleFiles(prefix,files){state[prefix].files=Array.from(files);renderPrev(prefix);}
+function renderPrev(prefix){
+  const el=document.getElementById(prefix+'-preview');el.innerHTML='';const files=state[prefix].files;
+  if(!files.length){el.classList.remove('show');return;}el.classList.add('show');
+  files.slice(0,3).forEach(f=>{const img=document.createElement('img');img.className='prev-img';img.src=URL.createObjectURL(f);el.appendChild(img);});
+  if(files.length>3){const c=document.createElement('div');c.className='prev-cnt';c.textContent='+'+(files.length-3);el.appendChild(c);}
+}
+function setupDrag(zoneId,prefix){
+  const z=document.getElementById(zoneId);
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag')});
+  z.addEventListener('dragleave',()=>z.classList.remove('drag'));
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drag');state[prefix].files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));renderPrev(prefix);});
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active');
+}
+function openRekap(){
+  const tabs=document.querySelectorAll('.nav-tab');tabs.forEach(b=>b.classList.remove('active'));tabs[2].classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-rekap').classList.add('active');
+}
+
+const DAYS=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function fmtDate(d){if(!d)return'-';try{const dt=new Date(d+'T00:00:00');return DAYS[dt.getDay()]+', '+dt.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});}catch(e){return d;}}
+function fmtDateR(d){if(!d)return'-';try{const dt=new Date(d+'T00:00:00');return d+' [ '+DAYS[dt.getDay()].toLowerCase()+' ]';}catch(e){return d;}}
+function mkRow(k,v){return`<div class="prev-row"><span class="prev-k">${k}</span><span class="prev-v">${v||'<em style="color:var(--muted)">belum diisi</em>'}</span></div>`;}
+
+function updateDutyPreview(){
+  document.getElementById('d-prev-wrap').classList.add('show');
+  document.getElementById('d-prev-content').innerHTML=mkRow('👤 Nama',state.d.nama)+mkRow('🏷️ Jabatan',state.d.jabatan)+mkRow('📅 Tanggal',fmtDate(document.getElementById('d-tanggal').value))+mkRow('🕐 Dari Jam',document.getElementById('d-jam-mulai').value||'-')+mkRow('🕐 Ke Jam',document.getElementById('d-jam-selesai').value||'-')+mkRow('🌙 Shift',state.d.shift?state.d.shift.label:'—')+mkRow('📸 Screenshot',state.d.files.length?state.d.files.length+' file':'Tidak ada')+mkRow('📝 Keterangan',document.getElementById('d-ket').value||'—');
+}
+function updateIzinPreview(){
+  document.getElementById('i-prev-wrap').classList.add('show');
+  document.getElementById('i-prev-content').innerHTML=mkRow('👤 Nama',state.i.nama)+mkRow('🏷️ Jabatan',state.i.jabatan)+mkRow('📅 Tanggal Izin',fmtDate(document.getElementById('i-tanggal').value))+mkRow('📆 Dari Hari',fmtDate(document.getElementById('i-dari').value))+mkRow('📆 Ke Hari',fmtDate(document.getElementById('i-ke').value))+mkRow('📝 Alasan',document.getElementById('i-reason').value||'—')+mkRow('🌙 Shift',state.i.shift?state.i.shift.label+' ('+state.i.shift.time+')':'-');
+}
+
+function validateDuty(){
+  if(!state.d.nama){toast('Pilih nama anggota dulu!','err');return false;}
+  if(!state.d.jabatan){toast('Pilih jabatan dulu!','err');return false;}
+  if(!document.getElementById('d-tanggal').value){toast('Isi tanggal duty!','err');return false;}
+  if(!document.getElementById('d-jam-mulai').value){toast('Isi jam mulai!','err');return false;}
+  if(!document.getElementById('d-jam-selesai').value){toast('Isi jam selesai!','err');return false;}
+  return true;
+}
+function validateIzin(){
+  if(!state.i.nama){toast('Pilih nama dulu!','err');return false;}
+  if(!state.i.jabatan){toast('Pilih jabatan dulu!','err');return false;}
+  if(!document.getElementById('i-tanggal').value){toast('Isi tanggal izin!','err');return false;}
+  if(!document.getElementById('i-dari').value){toast('Isi dari hari!','err');return false;}
+  if(!document.getElementById('i-ke').value){toast('Isi ke hari!','err');return false;}
+  if(!document.getElementById('i-reason').value.trim()){toast('Isi alasan izin!','err');return false;}
+  if(!state.i.shift){toast('Pilih shift yang ditinggalkan!','err');return false;}
+  return true;
+}
+
+async function submitDuty(){
+  if(!validateDuty())return;
+  const btn=document.getElementById('d-btn');const spin=document.getElementById('d-spin');
+  btn.disabled=true;spin.style.display='block';
+  const tanggal=document.getElementById('d-tanggal').value;
+  const jamMulai=document.getElementById('d-jam-mulai').value;
+  const jamSelesai=document.getElementById('d-jam-selesai').value;
+  const ket=document.getElementById('d-ket').value;
+  const[mH,mM]=jamMulai.split(':').map(Number);const[sH,sM]=jamSelesai.split(':').map(Number);
+  let totalMin=(sH*60+sM)-(mH*60+mM);if(totalMin<0)totalMin+=1440;
+  const data={nama:state.d.nama,jabatan:state.d.jabatan,tanggal,jamMulai,jamSelesai,durasiMenit:totalMin,shift:state.d.shift,keterangan:ket,timestamp:new Date().toISOString(),type:'duty'};
+  saveToRekap(data);
+  try{
+    const durStr=(()=>{const j=Math.floor(totalMin/60);const m=totalMin%60;return j>0?(j+' jam '+(m>0?m+' menit':'')):m+' menit';})();
+    const embed={title:'📋 LAPORAN DUTY LOUNGE',description:'> Laporan duty resmi dari anggota Pedagang Lounge',color:0xf59e0b,fields:[
+      {name:'👤 Nama',value:'**'+data.nama+'**',inline:true},{name:'🏷️ Jabatan',value:data.jabatan,inline:true},{name:'\u200b',value:'\u200b',inline:true},
+      {name:'📅 Tanggal',value:fmtDate(tanggal),inline:true},{name:'🕐 Jam',value:'`'+jamMulai+' → '+jamSelesai+'`',inline:true},{name:'⏱️ Durasi',value:'`'+durStr+'`',inline:true},
+      {name:'🌙 Shift',value:data.shift?'**'+data.shift.label+'**':'—',inline:false},{name:'📝 Keterangan',value:ket||'—',inline:false},
+    ],footer:{text:'Pedagang Lounge · Laporan Duty Resmi'},timestamp:new Date().toISOString()};
+    const roleTag=CFG.roleIds&&CFG.roleIds.length?CFG.roleIds.map(id=>`<@&${id}>`).join(' '):'';
+    await fetch(CFG.discordDuty,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:roleTag+' **Laporan duty masuk — mohon dicek!**',embeds:[embed]})});
+    for(let i=0;i<Math.min(state.d.files.length,5);i++){
+      const fd=new FormData();fd.append('file'+i,state.d.files[i],state.d.files[i].name);
+      fd.append('payload_json',JSON.stringify({content:`📸 Screenshot ${i+1} — ${data.nama}`}));
+      await fetch(CFG.discordDuty,{method:'POST',body:fd});
+    }
+    toast('Laporan duty berhasil dikirim!','ok');showStatus('d','Laporan terkirim ke Discord | '+new Date().toLocaleTimeString('id-ID'),'ok');
+  }catch(e){toast('Gagal kirim: '+e.message,'err');showStatus('d','Error: '+e.message,'err');}
+  btn.disabled=false;spin.style.display='none';
+}
+
+async function submitIzin(){
+  if(!validateIzin())return;
+  const btn=document.getElementById('i-btn');const spin=document.getElementById('i-spin');
+  btn.disabled=true;spin.style.display='block';
+  const tanggal=document.getElementById('i-tanggal').value;
+  const dari=document.getElementById('i-dari').value;const ke=document.getElementById('i-ke').value;
+  const reason=document.getElementById('i-reason').value;
+  saveToRekap({nama:state.i.nama,jabatan:state.i.jabatan,tanggal,dari,ke,reason,shift:state.i.shift,timestamp:new Date().toISOString(),type:'izin'});
+  try{
+    const embed={title:'🙏 PERMOHONAN IZIN — PEDAGANG LOUNGE',description:'> Permohonan izin resmi dari anggota Pedagang Lounge',color:0xdc6f00,fields:[
+      {name:'👤 Nama',value:'**'+state.i.nama+'**',inline:true},{name:'🏷️ Jabatan',value:state.i.jabatan,inline:true},{name:'\u200b',value:'\u200b',inline:true},
+      {name:'📅 Tanggal Izin',value:fmtDate(tanggal),inline:true},{name:'📆 Dari Hari',value:fmtDate(dari),inline:true},{name:'📆 Ke Hari',value:fmtDate(ke),inline:true},
+      {name:'🌙 Shift Ditinggalkan',value:'**'+state.i.shift.label+'**\n`'+state.i.shift.mulai+' → '+state.i.shift.selesai+'`',inline:false},{name:'📝 Alasan',value:reason,inline:false},
+    ],footer:{text:'Pedagang Lounge · Sistem Izin Resmi'},timestamp:new Date().toISOString()};
+    const roleTag=CFG.roleIds&&CFG.roleIds.length?CFG.roleIds.map(id=>`<@&${id}>`).join(' '):'';
+    await fetch(CFG.discordDuty,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:roleTag+' **Permohonan izin masuk — mohon disetujui!**',embeds:[embed]})});
+    toast('Permohonan izin berhasil dikirim!','ok');showStatus('i','Izin terkirim ke Discord petinggi','ok');
+  }catch(e){toast('Gagal: '+e.message,'err');showStatus('i','Error: '+e.message,'err');}
+  btn.disabled=false;spin.style.display='none';
+}
+
+function saveToRekap(data){let r=JSON.parse(localStorage.getItem('pd_rekap_v4')||'[]');r.push(data);localStorage.setItem('pd_rekap_v4',JSON.stringify(r));}
+
+function checkWeeklyRekap(){
+  const now=new Date();if(now.getDay()!==0)return;
+  const lastDuty=localStorage.getItem('pd_last_rekap');const diffDuty=lastDuty?(now-new Date(lastDuty))/864e5:999;
+  if(diffDuty>6){sendWeeklyRekapToDiscord();localStorage.setItem('pd_last_rekap',now.toISOString());}
+  const lastGaji=localStorage.getItem('pd_last_rekap_gaji');const diffGaji=lastGaji?(now-new Date(lastGaji))/864e5:999;
+  if(diffGaji>6){sendGajiToDiscord();localStorage.setItem('pd_last_rekap_gaji',now.toISOString());}
+}
+
+function fmtJam(menit){const j=Math.floor(menit/60);const m=menit%60;return menit>0?(j>0?j+'j '+(m>0?m+'m':''):m+'m'):'0j';}
+function fmtRupiah(n){if(n==null)return'—';return'$'+n.toLocaleString('en-US');}
+
+function hitungGaji(rekap){
+  const ANGGOTA=getAnggota();const JABATAN=getJabatan();
+  const GAJI={};JABATAN.forEach(j=>{if(j.gajiF)GAJI[j.name]={full:j.gajiF,half:j.gajiH||Math.round(j.gajiF/2)};});
+  const now=new Date();const week=rekap.filter(r=>(now-new Date(r.timestamp))<7*864e5);
+  const byName={};
+  week.forEach(r=>{if(!byName[r.nama])byName[r.nama]={duty:0,izin:0,totalMenit:0,jabatan:r.jabatan||''};if(!byName[r.nama].jabatan&&r.jabatan)byName[r.nama].jabatan=r.jabatan;if(r.type==='izin'){byName[r.nama].izin++;byName[r.nama].totalMenit+=CFG.izinMenit;}else{byName[r.nama].duty++;byName[r.nama].totalMenit+=(r.durasiMenit||0);}});
+  const jabatanHistoris={};rekap.forEach(r=>{if(r.jabatan)jabatanHistoris[r.nama]=r.jabatan;});
+  return ANGGOTA.map(a=>{
+    const nm=a.name;const c=byName[nm]||{duty:0,izin:0,totalMenit:0,jabatan:''};
+    const jabatan=c.jabatan||jabatanHistoris[nm]||'';const g=GAJI[jabatan]||null;
+    if(c.duty===0&&c.izin===0)return{nama:nm,jabatan,duty:0,izin:0,totalMenit:0,statusGaji:'bolos',nominal:0,potongPersen:100,aktif:true};
+    if(c.duty===0)return{nama:nm,jabatan,duty:0,izin:c.izin,totalMenit:c.totalMenit,statusGaji:'nol',nominal:0,potongPersen:100,aktif:true};
+    const hasil=hitungNominalGaji(g,c.izin);
+    return{nama:nm,jabatan,duty:c.duty,izin:c.izin,totalMenit:c.totalMenit,...hasil,aktif:true};
+  });
+}
+function hitungNominalGaji(g,jumlahIzin){
+  if(!g)return{statusGaji:'tanpa-jabatan',nominal:null,potongPersen:0};
+  if(jumlahIzin>=4)return{statusGaji:'setengah',nominal:g.half,potongPersen:50};
+  const pct=CFG.izinPotongan[jumlahIzin]||0;
+  return{statusGaji:pct===0?'full':'potong',nominal:Math.round(g.full*(1-pct/100)),potongPersen:pct};
+}
+
+async function sendWeeklyRekapToDiscord(){
+  const ANGGOTA=getAnggota();const rekap=JSON.parse(localStorage.getItem('pd_rekap_v4')||'[]');
+  const now=new Date();const week=rekap.filter(r=>(now-new Date(r.timestamp))<7*864e5);
+  const byShift={1:[],2:[],3:[],4:[]};const byName={};
+  week.forEach(r=>{if(r.shift&&byShift[r.shift.num])byShift[r.shift.num].push(r);if(!byName[r.nama])byName[r.nama]={duty:0,izin:0,totalMenit:0};if(r.type==='izin'){byName[r.nama].izin++;byName[r.nama].totalMenit+=CFG.izinMenit;}else{byName[r.nama].duty++;byName[r.nama].totalMenit+=(r.durasiMenit||0);}});
+  let fields=[];
+  SHIFTS.forEach(s=>{const e=byShift[s.num];if(!e||!e.length)return;fields.push({name:s.emoji+' '+s.label,value:e.map(r=>r.type==='izin'?`• ${r.nama} — ${r.tanggal} — **IZIN**`:`• ${r.nama} — ${fmtDateR(r.tanggal)} — jam ${r.jamMulai} - ${r.jamSelesai}`).join('\n'),inline:false});});
+  const tl=ANGGOTA.map(a=>{const c=byName[a.name]||{duty:0,izin:0,totalMenit:0};return c.duty===0&&c.izin===0?`• **${a.name}** — ❌ **BOLOS**`:`• **${a.name}** — ${c.duty} duty, ${c.izin} izin, ⏱️ ${fmtJam(c.totalMenit)}`;});
+  fields.push({name:'📊 Total Duty',value:tl.join('\n')||'—',inline:false});
+  await fetch(CFG.discordRekap,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({embeds:[{title:'📊 REKAP DUTY MINGGUAN — PEDAGANG LOUNGE',description:'Rekap otomatis duty & izin selama 1 minggu terakhir',color:0xf59e0b,fields,footer:{text:'Pedagang Lounge · Rekap Mingguan Otomatis'},timestamp:new Date().toISOString()}]})});
+}
+
+function showPasswordModal(){document.getElementById('pw-modal').classList.add('show');setTimeout(()=>document.getElementById('pw-input').focus(),100);}
+function closePwModal(){document.getElementById('pw-modal').classList.remove('show');document.getElementById('pw-input').value='';document.getElementById('pw-err').style.display='none';}
+function checkPw(){
+  const pw=document.getElementById('pw-input').value.trim().toLowerCase().replace(/\s/g,'');
+  if(pw===CFG.pw){closePwModal();document.getElementById('rekap-lock-card').style.display='none';showRekapContent();}
+  else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}
+}
+
+function showRekapContent(){
+  const ANGGOTA=getAnggota();const rekap=JSON.parse(localStorage.getItem('pd_rekap_v4')||'[]');
+  const panel=document.getElementById('rekap-content');panel.classList.add('show');
+  if(!rekap.length){panel.innerHTML='<div class="card" style="text-align:center;color:var(--muted);padding:2rem">Belum ada data laporan.</div>';return;}
+  const byShift={1:[],2:[],3:[],4:[]};const byName={};
+  rekap.forEach(r=>{if(r.shift&&byShift[r.shift.num])byShift[r.shift.num].push(r);if(!byName[r.nama])byName[r.nama]={duty:0,izin:0,totalMenit:0};if(r.type==='izin'){byName[r.nama].izin++;byName[r.nama].totalMenit+=CFG.izinMenit;}else{byName[r.nama].duty++;byName[r.nama].totalMenit+=(r.durasiMenit||0);}});
+  let shHtml='';
+  SHIFTS.forEach(s=>{const e=byShift[s.num];if(!e||!e.length)return;shHtml+=`<div class="shift-block"><div class="shift-header ${s.headerCls}">${s.emoji} ${s.label} <span style="font-size:.75rem;opacity:.7">${s.time}</span></div>${e.map(r=>r.type==='izin'?`<div class="shift-entry"><div class="se-dot se-dot-izin"></div><span class="entry-izin">IZIN</span><span style="color:var(--muted);font-size:.8rem">— ${r.nama} — ${fmtDateR(r.tanggal)}</span></div>`:`<div class="shift-entry"><div class="se-dot ${s.dotCls}"></div><span style="font-weight:700">${r.nama}</span><span style="color:var(--muted);font-size:.8rem">— ${fmtDateR(r.tanggal)} — jam ${r.jamMulai} - ${r.jamSelesai}</span></div>`).join('')}</div>`;});
+  const avCls=['av-1','av-2','av-3','av-4','av-5','av-6','av-7'];
+  let tHtml='<div class="total-grid">';
+  Object.entries(byName).forEach(([nm,c],i)=>{const av=ANGGOTA.find(a=>a.name===nm);const col=av?av.col:avCls[i%7];const ini=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();tHtml+=`<div class="total-card"><div class="tc-av ${col}">${ini}</div><div class="tc-info"><div class="tc-name">${nm}</div><div class="tc-count">${c.duty} duty · ${c.izin} izin · ⏱️ ${fmtJam(c.totalMenit)}</div></div></div>`;});
+  tHtml+='</div>';
+
+  const gajiDataAll=hitungGaji(rekap);
+  let gHtml='<div class="total-grid">';let totalSemua=0;
+  gajiDataAll.forEach((g,i)=>{
+    const av=ANGGOTA.find(a=>a.name===g.nama);const col=av?av.col:avCls[i%7];
+    const ini=g.nama.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const JABATAN=getJabatan();const jabShort=(JABATAN.find(j=>j.name===g.jabatan)||{}).short||g.jabatan||'—';
+    const badgeMap={full:'<span style="color:#22c55e;font-weight:800">FULL</span>',potong:`<span style="color:var(--danger);font-weight:800">POTONG ${g.potongPersen}%</span>`,setengah:'<span style="color:var(--danger);font-weight:800">SETENGAH</span>',nol:'<span style="color:var(--danger);font-weight:800">TANPA GAJI</span>','tanpa-jabatan':'<span style="color:var(--muted)">—</span>',bolos:'<span style="color:var(--danger);font-weight:800">BOLOS</span>'};
+    if(g.nominal)totalSemua+=g.nominal;
+    gHtml+=`<div class="total-card" style="flex-direction:column;align-items:flex-start;gap:6px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="tc-av ${col}">${ini}</div><div class="tc-info" style="flex:1"><div class="tc-name">${g.nama} <span style="color:var(--muted);font-weight:600;font-size:.75rem">(${jabShort})</span></div><div class="tc-count">${g.duty} duty, ${g.izin} izin</div></div></div><div style="width:100%;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:6px"><span style="font-size:.78rem">${badgeMap[g.statusGaji]||'—'}</span><span style="font-weight:800;color:var(--accent);font-size:.95rem">${fmtRupiah(g.nominal)}</span></div></div>`;
+  });
+  gHtml+='</div>';
+  gHtml+=`<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between"><span style="font-weight:800;color:var(--muted);font-size:.85rem">TOTAL GAJI</span><span style="font-weight:800;color:var(--gold);font-size:1.2rem">${fmtRupiah(totalSemua)}</span></div>`;
+
+  panel.innerHTML=`<div class="card"><div class="card-title"><div class="card-icon ci-gold">📊</div><span class="g-text">Total Duty Anggota</span></div>${tHtml}</div><div class="card"><div class="card-title"><div class="card-icon ci-amber">🌙</div><span class="g-text">Rekap Per Shift</span></div>${shHtml||'<div style="color:var(--muted)">Belum ada data shift.</div>'}</div><div class="card"><div class="card-title"><div class="card-icon ci-green">💰</div><span class="g-text">Rekap Gaji Mingguan</span></div><div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;margin-top:-.6rem">Tiap izin: +2 jam · 1x izin: full · 2x: -5% · 3x: -10% · 4x+: setengah</div>${gHtml}<div style="margin-top:1rem"><button class="btn-sm btn-ghost" onclick="sendGajiToDiscord().then(()=>toast('Rekap gaji terkirim!','ok'))">💰 Kirim Rekap Gaji</button></div></div><div class="card" style="border-color:rgba(245,158,11,.2)"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-sm btn-ghost" onclick="sendWeeklyRekapToDiscord().then(()=>toast('Rekap terkirim!','ok'))">📤 Kirim Rekap ke Discord</button><button class="btn-sm btn-danger" onclick="if(confirm('Hapus semua data rekap?')){localStorage.removeItem('pd_rekap_v4');showRekapContent();toast('Data terhapus','info')}">🗑️ Hapus Data</button></div></div>`;
+}
+
+async function sendGajiToDiscord(){
+  const rekap=JSON.parse(localStorage.getItem('pd_rekap_v4')||'[]');
+  const JABATAN=getJabatan();const gajiData=hitungGaji(rekap);
+  let totalSemua=0;
+  const statusTxt={full:'✅ FULL',setengah:'⚠️ SETENGAH',nol:'❌ TANPA GAJI','tanpa-jabatan':'⚠️ Jabatan belum diset',bolos:'❌ BOLOS'};
+  const lines=gajiData.map(g=>{const jabShort=(JABATAN.find(j=>j.name===g.jabatan)||{}).short||'—';const status=g.statusGaji==='potong'?('⚠️ POTONG '+g.potongPersen+'%'):(statusTxt[g.statusGaji]||'—');if(g.nominal)totalSemua+=g.nominal;return`• **${g.nama}** (${jabShort}) — ${g.duty} duty, ${g.izin} izin · ${status} → **${fmtRupiah(g.nominal)}**`;});
+  const embed={title:'💰 REKAP GAJI MINGGUAN — PEDAGANG LOUNGE',description:'1x izin: 0% · 2x: -5% · 3x: -10% · 4x+: GAJI SETENGAH',color:0x22c55e,fields:[{name:'📋 Detail Gaji',value:lines.join('\n')||'—',inline:false},{name:'💵 Total',value:'**'+fmtRupiah(totalSemua)+'**',inline:false}],footer:{text:'Pedagang Lounge · Rekap Gaji'},timestamp:new Date().toISOString()};
+  await fetch(CFG.discordGaji,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({embeds:[embed]})});
+}
+
+function showStatus(prefix,msg,type){const el=document.getElementById(prefix+'-status');el.textContent=msg;el.className='status show '+(type==='err'?'err':'ok');setTimeout(()=>el.classList.remove('show'),6000);}
+function toast(msg,type){const el=document.createElement('div');el.className='toast '+(type||'info');el.textContent=msg;document.getElementById('toast-c').appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+function resetDuty(){
+  state.d={nama:'',jabatan:'',shift:null,files:[]};
+  ['d-nama-disp','d-jab-disp'].forEach(id=>{const el=document.getElementById(id);el.textContent=id.includes('nama')?'— Pilih Nama —':'— Pilih Jabatan —';el.classList.add('ph');});
+  document.getElementById('d-nama-av').style.display='none';
+  document.querySelectorAll('#d-nama-dp .di, #d-jab-dp .di').forEach(d=>d.classList.remove('sel'));
+  document.querySelectorAll('#d-shifts .spill').forEach(s=>s.classList.remove('active'));
+  document.getElementById('d-tanggal').value=new Date().toISOString().split('T')[0];
+  document.getElementById('d-ket').value='';document.getElementById('d-preview').classList.remove('show');
+  document.getElementById('d-autofill').style.display='none';document.getElementById('d-prev-wrap').classList.remove('show');
+  document.getElementById('d-screenshot').value='';document.getElementById('d-jam-mulai').value='';document.getElementById('d-jam-selesai').value='';document.getElementById('d-jam-box').style.display='none';
+  toast('Form direset','info');
+}
+function resetIzin(){
+  state.i={nama:'',jabatan:'',shift:null};
+  ['i-nama-disp','i-jab-disp'].forEach(id=>{const el=document.getElementById(id);el.textContent=id.includes('nama')?'— Pilih Nama —':'— Pilih Jabatan —';el.classList.add('ph');});
+  document.getElementById('i-nama-av').style.display='none';
+  document.querySelectorAll('#i-nama-dp .di, #i-jab-dp .di').forEach(d=>d.classList.remove('sel'));
+  document.querySelectorAll('#i-shifts .spill').forEach(s=>s.classList.remove('active'));
+  const today=new Date().toISOString().split('T')[0];
+  ['i-tanggal','i-dari','i-ke'].forEach(id=>document.getElementById(id).value=today);
+  document.getElementById('range-badge').style.display='none';updateRangeDisplay();
+  document.getElementById('i-reason').value='';document.getElementById('i-prev-wrap').classList.remove('show');document.getElementById('i-jam-box').style.display='none';
+  toast('Form direset','info');
+}
+</script>
+</body>
+</html>
